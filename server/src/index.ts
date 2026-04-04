@@ -144,12 +144,26 @@ const PROBLEMS: Problem[] = [
 // ── Server ─────────────────────────────────────────────────────────────────
 
 const app = express();
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || "http://localhost:3000" }));
+
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:3000";
+
+app.use(cors({ 
+  origin: CLIENT_ORIGIN,
+  credentials: true 
+}));
+
 app.use(express.json());
+
+// Root health check for Render/Fly.io verification
+app.get("/", (_, res) => res.send("🚀 CodeWars Monolith Server: ONLINE"));
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: process.env.CLIENT_ORIGIN || "http://localhost:3000", methods: ["GET", "POST"] },
+  cors: { 
+    origin: CLIENT_ORIGIN, 
+    methods: ["GET", "POST"],
+    credentials: true
+  },
 });
 
 // ── Helpers ────────────────────────────────────────────────────────────────
