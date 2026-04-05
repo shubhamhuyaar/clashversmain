@@ -16,7 +16,9 @@ interface MatchHistory {
   id: string;
   player1_username: string | null;
   player2_username: string | null;
-  winner_id: string | null;
+  player1_id: string | null;
+  player2_id: string | null;
+  winner: string | null; // "player1" | "player2" | "draw"
   elo_change_p1: number | null;
   elo_change_p2: number | null;
   problem_title: string | null;
@@ -81,8 +83,13 @@ export default function CareerPage() {
   }
 
   const getMatchResult = (m: MatchHistory) => {
-    if (!m.winner_id) return { label: 'DRAW', color: '#ffcc00', bg: 'rgba(255, 204, 0, 0.1)' };
-    if (m.winner_id === userId) return { label: 'VICTORY', color: '#00ff88', bg: 'rgba(0, 255, 136, 0.1)' };
+    if (!m.winner || m.winner === 'draw') return { label: 'DRAW', color: '#ffcc00', bg: 'rgba(255, 204, 0, 0.1)' };
+    const amPlayer1 = m.player1_id === userId;
+    const amPlayer2 = m.player2_id === userId;
+    
+    if (m.winner === 'player1' && amPlayer1) return { label: 'VICTORY', color: '#00ff88', bg: 'rgba(0, 255, 136, 0.1)' };
+    if (m.winner === 'player2' && amPlayer2) return { label: 'VICTORY', color: '#00ff88', bg: 'rgba(0, 255, 136, 0.1)' };
+    
     return { label: 'DEFEAT', color: '#ff003c', bg: 'rgba(255, 0, 60, 0.1)' };
   };
 
