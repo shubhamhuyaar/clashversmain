@@ -79,6 +79,10 @@ const corsOptions = { origin: "*" };
 app.use(cors(corsOptions));
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("CodeWars/ClashVers WebSocket Backend is actively running!");
+});
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: { origin: "*", methods: ["GET", "POST"] },
