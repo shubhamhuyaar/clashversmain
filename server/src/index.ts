@@ -639,19 +639,9 @@ app.post("/room/create", async (req, res) => {
     }
   }
 
-  // No compatible room found — create a new one
+  // No compatible room found — create a new one synchronously in memory FIRST
   const problem = getRandomProblem();
-  let matchId: string = crypto.randomUUID(); // Valid UUID fallback
-  try {
-    const { data: match, error } = await supabase.from("matches").insert({ player1_id: userId, problem_id: problem.id, problem_title: problem.title, status: "waiting" }).select().single();
-    if (error) {
-      console.error("[Match Insert Error]:", error);
-    } else if (match) {
-      matchId = (match as any).id as string;
-    }
-  } catch (err) {
-    console.error("[Match Insert Exception]:", err);
-  }
+  const matchId: string = crypto.randomUUID();
 
   const newRoom: Room = {
     roomId: matchId,
@@ -677,8 +667,18 @@ app.post("/room/create", async (req, res) => {
     console.log(`[matchmaking] Room ${matchId} ELO range expanded → ±${newRoom.eloRange}`);
   }, ELO_EXPAND_INTERVAL);
 
-  rooms.set(matchId, newRoom);
+  rooms.set(matchId, newRoom); // Atomic synchronous addition
   console.log(`[matchmaking] ${username} (${playerElo}) created room ${matchId} (range ±${ELO_START_RANGE})`);
+  
+  // Asynchronously register match to Database without yielding loop locally
+  try {
+    supabase.from("matches").insert({ id: matchId, player1_id: userId, problem_id: problem.id, problem_title: problem.title, status: "waiting" }).then(({error}) => {
+      if (error) console.error("[Match Insert Error]:", error);
+    });
+  } catch (err) {
+    console.error("[Match Insert Exception]:", err);
+  }
+
   res.json({ roomId: matchId, joined: false, playerElo });
 });
 
