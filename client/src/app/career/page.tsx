@@ -105,16 +105,11 @@ export default function CareerPage() {
                   const statSpeed = Math.min(1, Math.max(0.2, winRate * 1.5)); // Win Rate
                   const statEndurance = Math.min(1, Math.max(0.2, total / 50)); // Matches played
                   
-                  // Deterministic pseudo-stats using profile data to give unique but consistent shapes
-                  const statLogic = Math.min(1, Math.max(0.2, (((profile?.wins || 0) * 13) % 100) / 100));
-                  const statAdapt = Math.min(1, Math.max(0.2, ((eloVal * 7) % 100) / 100));
-                  const statFocus = Math.min(1, Math.max(0.2, (((total || 0) * 17) % 100) / 100));
+                  const statsArray = [statPower, statSpeed, statEndurance];
                   
-                  const statsArray = [statPower, statAdapt, statSpeed, statEndurance, statFocus, statLogic];
-                  
-                  // Map 6 stats to 6 points on a circle (radius 45 is the outer ring)
+                  // Map 3 stats to 3 points on a circle (radius 45 is the outer ring)
                   const points = statsArray.map((val, i) => {
-                    const angle = (Math.PI / 3) * i - (Math.PI / 2); // Start at top (-90deg)
+                    const angle = ((Math.PI * 2) / 3) * i - (Math.PI / 2); // Start at top (-90deg)
                     const r = val * 45; 
                     return { x: 50 + r * Math.cos(angle), y: 50 + r * Math.sin(angle) };
                   });
@@ -123,10 +118,13 @@ export default function CareerPage() {
 
                   return (
                     <svg className="absolute w-full h-full drop-shadow-[0_0_15px_rgba(169,206,202,0.4)] overflow-visible" viewBox="0 0 100 100">
-                      {/* Grid Lines for 6 axes */}
-                      {Array.from({length: 3}).map((_, i) => (
-                        <line key={i} x1="50" y1="5" x2="50" y2="95" stroke="rgba(169,206,202,0.1)" strokeWidth="0.5" transform={`rotate(${i * 60} 50 50)`} />
-                      ))}
+                      {/* Grid Lines for 3 axes */}
+                      {Array.from({length: 3}).map((_, i) => {
+                        const angle = ((Math.PI * 2) / 3) * i - (Math.PI / 2);
+                        return (
+                          <line key={i} x1="50" y1="50" x2={50 + 45 * Math.cos(angle)} y2={50 + 45 * Math.sin(angle)} stroke="rgba(169,206,202,0.1)" strokeWidth="0.5" />
+                        );
+                      })}
                       {/* Web Rings */}
                       <circle cx="50" cy="50" fill="none" r="45" stroke="rgba(169,206,202,0.1)" strokeWidth="0.5"></circle>
                       <circle cx="50" cy="50" fill="none" r="30" stroke="rgba(169,206,202,0.1)" strokeWidth="0.5"></circle>
@@ -141,13 +139,10 @@ export default function CareerPage() {
                   );
                 })()}
                 
-                {/* Labels matched to the 6 axes */}
-                <div className="absolute -top-4 text-[9px] text-teal-300 font-bold uppercase tracking-widest">Power</div>
-                <div className="absolute top-8 -right-6 text-[9px] text-teal-300 font-bold uppercase tracking-widest">Adapt</div>
-                <div className="absolute bottom-8 -right-6 text-[9px] text-teal-300 font-bold uppercase tracking-widest">Speed</div>
-                <div className="absolute -bottom-4 text-[9px] text-teal-300 font-bold uppercase tracking-widest">Endure</div>
-                <div className="absolute bottom-8 -left-6 text-[9px] text-teal-300 font-bold uppercase tracking-widest">Focus</div>
-                <div className="absolute top-8 -left-6 text-[9px] text-teal-300 font-bold uppercase tracking-widest">Logic</div>
+                {/* Labels matched to the 3 axes */}
+                <div className="absolute -top-4 text-[10px] text-teal-300 font-bold uppercase tracking-widest">Power</div>
+                <div className="absolute bottom-4 -right-2 text-[10px] text-teal-300 font-bold uppercase tracking-widest">Speed</div>
+                <div className="absolute bottom-4 -left-2 text-[10px] text-teal-300 font-bold uppercase tracking-widest">Endure</div>
               </div>
               <div className="mt-8 grid grid-cols-2 w-full gap-4">
                 <div className="bg-white/5 p-3 rounded-xl border border-white/5">
