@@ -182,8 +182,8 @@ async function callEloUpdate(
     }
     const m = match as any;
     console.log(`[callEloUpdate] match row: p1_delta=${m.player1_elo_delta} p2_delta=${m.player2_elo_delta} p1_id=${m.player1_id} p2_id=${m.player2_id}`);
-    const winnerDelta = m.player1_id === winnerId ? m.player1_elo_delta : m.player2_elo_delta;
-    const loserDelta  = m.player1_id === loserId  ? m.player1_elo_delta : m.player2_elo_delta;
+    const winnerDelta = String(m.player1_id) === String(winnerId) ? m.player1_elo_delta : m.player2_elo_delta;
+    const loserDelta  = String(m.player1_id) === String(loserId)  ? m.player1_elo_delta : m.player2_elo_delta;
     return { winnerDelta: winnerDelta ?? 0, loserDelta: loserDelta ?? 0 };
   } catch (err) {
     console.error("[elo-update-error]", err);
