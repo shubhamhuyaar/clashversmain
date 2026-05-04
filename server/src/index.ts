@@ -355,7 +355,7 @@ app.get("/leaderboard", async (_, res) => {
       .from("profiles")
       .select("id, username, elo, wins, losses, avatar_url")
       .order("elo", { ascending: false })
-      .limit(20);
+      .limit(100);
     if (error) { res.status(500).json({ error: error.message }); return; }
     res.json(data ?? []);
   } catch {
