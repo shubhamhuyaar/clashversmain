@@ -4,6 +4,7 @@ export interface Player {
   language: string;
   codeLength?: number;
   elo?: number;
+  avatar_url?: string;
 }
 
 export interface Problem {
@@ -18,6 +19,7 @@ export interface RevealedPlayer {
   username: string;
   code: string;
   language: string;
+  avatar_url?: string;
 }
 
 export interface RoomJoinedPayload {

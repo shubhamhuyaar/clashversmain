@@ -20,6 +20,7 @@ interface PlayerState {
   userId: string;
   username: string;
   elo: number;
+  avatar_url?: string;
   codeLength: number;
   code: string;
   language: string;
@@ -125,20 +126,23 @@ function hashPassword(password: string): string {
   return crypto.createHmac("sha256", salt).update(password).digest("hex");
 }
 
-/** Fetch player ELO from Supabase profiles. Does NOT auto-create anymore. */
-async function fetchPlayerElo(userId: string): Promise<number> {
+/** Fetch player info from Supabase profiles. */
+async function fetchPlayerInfo(userId: string): Promise<{ elo: number; avatar_url: string }> {
   try {
     const { data, error } = await supabase
       .from("profiles")
-      .select("elo")
+      .select("elo, avatar_url")
       .eq("id", userId)
       .single();
-      
-    if (error || !data) return 1000;
-    return (data as any).elo ?? 1000;
+
+    if (error || !data) return { elo: 1000, avatar_url: "" };
+    return {
+      elo: (data as any).elo ?? 1000,
+      avatar_url: (data as any).avatar_url ?? ""
+    };
   } catch (err) {
-    console.error("[fetch-elo-error]", err);
-    return 1000;
+    console.error("[fetch-info-error]", err);
+    return { elo: 1000, avatar_url: "" };
   }
 }
 
@@ -183,7 +187,7 @@ async function callEloUpdate(
     const m = match as any;
     console.log(`[callEloUpdate] match row: p1_delta=${m.player1_elo_delta} p2_delta=${m.player2_elo_delta} p1_id=${m.player1_id} p2_id=${m.player2_id}`);
     const winnerDelta = String(m.player1_id) === String(winnerId) ? m.player1_elo_delta : m.player2_elo_delta;
-    const loserDelta  = String(m.player1_id) === String(loserId)  ? m.player1_elo_delta : m.player2_elo_delta;
+    const loserDelta = String(m.player1_id) === String(loserId) ? m.player1_elo_delta : m.player2_elo_delta;
     return { winnerDelta: winnerDelta ?? 0, loserDelta: loserDelta ?? 0 };
   } catch (err) {
     console.error("[elo-update-error]", err);
@@ -238,19 +242,19 @@ Decide who wins. Return ONLY parseable JSON matching exactly this schema, withou
       body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
     });
     const data = await res.json();
-    
+
     if (!(data as any).candidates || (data as any).candidates.length === 0) {
       console.error("[gemini-data-error] No candidates returned from Gemini API. Raw Data:", JSON.stringify(data));
       throw new Error("No candidates returned");
     }
 
     let text = (data as any).candidates[0].content.parts[0].text;
-    
+
     // Fallback: strip markdown json wrappers if present
     if (text.startsWith("```json")) {
-      text = text.replace(/^```json\n?/, "").replace(/\n?```$/,"").trim();
+      text = text.replace(/^```json\n?/, "").replace(/\n?```$/, "").trim();
     }
-    
+
     return JSON.parse(text);
   } catch (err) {
     console.error("[gemini-error]", err);
@@ -314,14 +318,14 @@ async function evaluateAndReveal(room: Room, forcedWinner?: "player1" | "player2
   try {
     const isDraw = winner === "draw";
     const winnerId = isDraw ? p1.userId : (winner === "player1" ? p1.userId : p2.userId);
-    const loserId  = isDraw ? p2.userId : (winner === "player1" ? p2.userId : p1.userId);
+    const loserId = isDraw ? p2.userId : (winner === "player1" ? p2.userId : p1.userId);
     console.log(`[elo] calling RPC: matchId=${room.matchId} winnerId=${winnerId} loserId=${loserId} isDraw=${isDraw}`);
 
     const { winnerDelta, loserDelta } = await callEloUpdate(room.matchId, winnerId, loserId, isDraw);
     eloDeltas[winnerId] = winnerDelta;
-    eloDeltas[loserId]  = loserDelta;
+    eloDeltas[loserId] = loserDelta;
     console.log(`[elo] result → ${p1.username}: ${eloDeltas[p1.userId] >= 0 ? "+" : ""}${eloDeltas[p1.userId]}  |  ${p2.username}: ${eloDeltas[p2.userId] >= 0 ? "+" : ""}${eloDeltas[p2.userId]}`);
-    
+
     if (winnerDelta === 0 && loserDelta === 0 && !isDraw) {
       console.error("[elo] ⚠ BOTH DELTAS ARE ZERO for a non-draw — RPC likely failed silently!");
     }
@@ -335,8 +339,8 @@ async function evaluateAndReveal(room: Room, forcedWinner?: "player1" | "player2
     evaluations,
     eloDeltas,
     players: [
-      { userId: p1.userId, username: p1.username, code: p1.code, language: p1.language, elo: p1.elo },
-      { userId: p2.userId, username: p2.username, code: p2.code, language: p2.language, elo: p2.elo },
+      { userId: p1.userId, username: p1.username, code: p1.code, language: p1.language, elo: p1.elo, avatar_url: p1.avatar_url },
+      { userId: p2.userId, username: p2.username, code: p2.code, language: p2.language, elo: p2.elo, avatar_url: p2.avatar_url },
     ],
   });
 
@@ -363,12 +367,26 @@ app.get("/leaderboard", async (_, res) => {
   }
 });
 
+app.use(express.json({ limit: "5mb" }));
+
+app.post("/profile/:userId/avatar", async (req, res) => {
+  try {
+    const { avatar_url } = req.body;
+    if (!avatar_url) { res.status(400).json({ error: "Missing avatar_url" }); return; }
+    const { error } = await supabase.from("profiles").update({ avatar_url }).eq("id", req.params.userId);
+    if (error) { res.status(500).json({ error: error.message }); return; }
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Failed to update avatar" });
+  }
+});
+
 /** Single player profile */
 app.get("/profile/:userId", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, username, elo, wins, losses")
+      .select("id, username, elo, wins, losses, avatar_url")
       .eq("id", req.params.userId)
       .single();
     if (error || !data) { res.json({ elo: 1000, wins: 0, losses: 0 }); return; }
@@ -458,7 +476,7 @@ app.post("/api/nodes/create", async (req, res) => {
       .insert({ code: codeUpper, name, description: "Encrypted Local Network" })
       .select().single();
     if (createError || !newNode) { res.status(500).json({ error: "Failed to initialize Node. Integrity error." }); return; }
-    
+
     await supabase.from("node_memberships").insert({ node_id: newNode.id, user_id: userId, role: "ADMIN" });
     res.json({ node: newNode, role: "ADMIN" });
   } catch (err) {
@@ -474,7 +492,7 @@ app.post("/api/nodes/join", async (req, res) => {
   try {
     const codeUpper = code.toUpperCase();
     let { data: node, error: eqErr } = await supabase.from("nodes").select("*").eq("code", codeUpper).maybeSingle();
-    
+
     if (!node) {
       res.status(404).json({ error: "Invalid Credential Code" });
       return;
@@ -547,7 +565,7 @@ app.post("/api/nodes/:code/broadcast", async (req, res) => {
 
     const { data: membership } = await supabase.from("node_memberships")
       .select("role").eq("node_id", node.id).eq("user_id", userId).single();
-    
+
     if (!membership || membership.role !== "ADMIN") {
       res.status(403).json({ error: "Clearance Level Insufficient" }); return;
     }
@@ -570,7 +588,7 @@ app.post("/auth/register", async (req, res) => {
   try {
     const userId = crypto.randomUUID();
     const passwordHash = hashPassword(password);
-    
+
     // Check if username already exists
     const { data: existing } = await supabase.from("profiles").select("id").eq("username", username).maybeSingle();
     if (existing) return res.status(400).json({ error: "Username already taken" });
@@ -621,8 +639,8 @@ app.post("/room/create", async (req, res) => {
   const { userId, username } = req.body as { userId: string; username: string };
   if (!userId || !username) { res.status(400).json({ error: "Missing userId or username" }); return; }
 
-  // Fetch this player's ELO for matchmaking
-  const playerElo = await fetchPlayerElo(userId);
+  // Fetch this player's info for matchmaking
+  const { elo: playerElo } = await fetchPlayerInfo(userId);
   console.log(`[matchmaking] ${username} ELO=${playerElo} searching for room…`);
 
   // Find a compatible waiting room within ELO range
@@ -669,10 +687,10 @@ app.post("/room/create", async (req, res) => {
 
   rooms.set(matchId, newRoom); // Atomic synchronous addition
   console.log(`[matchmaking] ${username} (${playerElo}) created room ${matchId} (range ±${ELO_START_RANGE})`);
-  
+
   // Asynchronously register match to Database without yielding loop locally
   try {
-    supabase.from("matches").insert({ id: matchId, player1_id: userId, problem_id: problem.id, problem_title: problem.title, status: "waiting" }).then(({error}) => {
+    supabase.from("matches").insert({ id: matchId, player1_id: userId, problem_id: problem.id, problem_title: problem.title, status: "waiting" }).then(({ error }) => {
       if (error) console.error("[Match Insert Error]:", error);
     });
   } catch (err) {
@@ -700,8 +718,8 @@ io.on("connection", (socket: Socket) => {
       socketToUser.delete(old.socketId);
     }
 
-    const playerElo = await fetchPlayerElo(userId);
-    const playerState: PlayerState = { socketId: socket.id, userId, username, elo: playerElo, codeLength: 0, code: "", language, lastUpdate: 0, updateCount: 0, windowStart: Date.now(), drawAttempts: 0 };
+    const { elo: playerElo, avatar_url: playerAvatar } = await fetchPlayerInfo(userId);
+    const playerState: PlayerState = { socketId: socket.id, userId, username, elo: playerElo, avatar_url: playerAvatar, codeLength: 0, code: "", language, lastUpdate: 0, updateCount: 0, windowStart: Date.now(), drawAttempts: 0 };
     room.players.set(userId, playerState);
     socketToRoom.set(socket.id, roomId);
     socketToUser.set(socket.id, userId);
@@ -710,7 +728,7 @@ io.on("connection", (socket: Socket) => {
 
     socket.emit("room_joined", {
       roomId, matchId: room.matchId, problem: room.problem, status: room.status,
-      players: Array.from(room.players.values()).map((p) => ({ userId: p.userId, username: p.username, language: p.language, codeLength: p.codeLength, elo: p.elo })),
+      players: Array.from(room.players.values()).map((p) => ({ userId: p.userId, username: p.username, language: p.language, codeLength: p.codeLength, elo: p.elo, avatar_url: p.avatar_url })),
     });
 
     if (room.players.size === 2) {
@@ -723,7 +741,7 @@ io.on("connection", (socket: Socket) => {
       room.matchStarted = startedAt;
 
       io.to(roomId).emit("match_start", {
-        players: playerList.map((p) => ({ userId: p.userId, username: p.username, language: p.language, elo: p.elo })),
+        players: playerList.map((p) => ({ userId: p.userId, username: p.username, language: p.language, elo: p.elo, avatar_url: p.avatar_url })),
         problem: room.problem, duration: MATCH_DURATION, startedAt,
       });
 

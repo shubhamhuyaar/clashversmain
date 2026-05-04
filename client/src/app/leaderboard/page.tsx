@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-interface Player { id: string; username: string; elo: number; wins: number; losses: number; }
+interface Player { id: string; username: string; elo: number; wins: number; losses: number; avatar_url?: string; }
 
 import { TopNav } from '@/components/TopNav';
 
@@ -61,7 +61,9 @@ export default function LeaderboardPage() {
                   {top3[0] && (
                     <div className="podium-rank-1" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateY(-32px)' }}>
                       <div style={{ marginBottom: 24, position: 'relative' }}>
-                        <div style={{ width: 128, height: 128, borderRadius: '50%', overflow: 'hidden', border: '4px solid var(--tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', fontSize: 44 }}>🏆</div>
+                        <div style={{ width: 128, height: 128, borderRadius: '50%', overflow: 'hidden', border: '4px solid var(--tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', fontSize: 44 }}>
+                          {top3[0].avatar_url ? <img src={top3[0].avatar_url} alt="Rank 1" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🏆'}
+                        </div>
                         <div style={{ position: 'absolute', bottom: -12, right: 8, width: 40, height: 40, borderRadius: '50%', background: 'var(--tertiary)', color: 'var(--on-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18 }}>1</div>
                       </div>
                       <div className="glass-panel pedestal-glow-gold" style={{ width: 240, height: 320, borderRadius: '40px 40px 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 40, gap: 6 }}>
@@ -80,7 +82,9 @@ export default function LeaderboardPage() {
                   {top3[1] && (
                     <div className="podium-rank-2" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <div style={{ marginBottom: 24, position: 'relative' }}>
-                        <div style={{ width: 96, height: 96, borderRadius: '50%', overflow: 'hidden', border: '2px solid var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', fontSize: 32 }}>🥈</div>
+                        <div style={{ width: 96, height: 96, borderRadius: '50%', overflow: 'hidden', border: '2px solid var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', fontSize: 32 }}>
+                          {top3[1].avatar_url ? <img src={top3[1].avatar_url} alt="Rank 2" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🥈'}
+                        </div>
                         <div style={{ position: 'absolute', bottom: -8, right: 0, width: 32, height: 32, borderRadius: '50%', background: 'var(--primary)', color: 'var(--on-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14 }}>2</div>
                       </div>
                       <div className="glass-panel pedestal-glow-silver" style={{ width: 192, height: 224, borderRadius: '24px 24px 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 32, gap: 4 }}>
@@ -94,7 +98,9 @@ export default function LeaderboardPage() {
                   {top3[2] && (
                     <div className="podium-rank-3" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <div style={{ marginBottom: 24, position: 'relative' }}>
-                        <div style={{ width: 96, height: 96, borderRadius: '50%', overflow: 'hidden', border: '2px solid var(--tertiary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', fontSize: 32 }}>🥉</div>
+                        <div style={{ width: 96, height: 96, borderRadius: '50%', overflow: 'hidden', border: '2px solid var(--tertiary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', fontSize: 32 }}>
+                          {top3[2].avatar_url ? <img src={top3[2].avatar_url} alt="Rank 3" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : '🥉'}
+                        </div>
                         <div style={{ position: 'absolute', bottom: -8, right: 0, width: 32, height: 32, borderRadius: '50%', background: 'var(--tertiary-container)', color: 'var(--on-tertiary-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14 }}>3</div>
                       </div>
                       <div className="glass-panel pedestal-glow-bronze" style={{ width: 192, height: 176, borderRadius: '24px 24px 0 0', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 32, gap: 4 }}>
@@ -153,8 +159,8 @@ export default function LeaderboardPage() {
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                       <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--secondary)', fontSize: 14 }}>#{String(globalRank).padStart(2, '0')}</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-                          {['👾', '🤖', '💻', '⚡', '🔥'][globalRank % 5]}
+                        <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, overflow: 'hidden' }}>
+                          {p.avatar_url ? <img src={p.avatar_url} alt={p.username} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : ['👾', '🤖', '💻', '⚡', '🔥'][globalRank % 5]}
                         </div>
                         <div>
                           <div style={{ fontWeight: 600, color: 'var(--on-surface)', letterSpacing: '-0.01em' }}>{p.username}</div>

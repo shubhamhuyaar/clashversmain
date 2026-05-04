@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { TopNav } from '@/components/TopNav';
 
-interface PlayerProfile { id: string; username: string; elo: number; wins: number; losses: number; }
+interface PlayerProfile { id: string; username: string; elo: number; wins: number; losses: number; avatar_url?: string; }
 interface MatchHistory { id: string; player1_username: string | null; player2_username: string | null; player1_id: string | null; player2_id: string | null; winner: string | null; player1_elo_delta: number | null; player2_elo_delta: number | null; problem_title: string | null; created_at: string | null; ended_at: string | null; }
 
 const timeAgo = (d: string) => { const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000); if (s < 60) return 'just now'; const m = Math.floor(s / 60); if (m < 60) return `${m}m ago`; const h = Math.floor(m / 60); return h < 24 ? `${h}h ago` : `${Math.floor(h / 24)}d ago`; };
@@ -15,7 +15,50 @@ export default function CareerPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { alert("File too large (max 5MB)"); return; }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) updateAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const updateAvatar = async (url: string) => {
+    if (!userId) return;
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
+      const res = await fetch(`${API_URL}/profile/${userId}/avatar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar_url: url })
+      });
+      if (res.ok) {
+        setProfile(p => p ? { ...p, avatar_url: url } : p);
+        setAvatarMenuOpen(false);
+      } else {
+        console.error("Failed to update avatar");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const PREDEFINED_AVATARS = [
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuCKBakTMxw1Bb8Rbb6Aq1OnYAp62HjJGGWPp95vBEFw-3O5lcNdwpLl8vmnXn-Iz5vkBIOWogL1mfDOjIQQ9ygQXzwBw4j47mY3f1gcCFz3aNJP9zSh3cKpf8a3aj8-0BYbZNnelGs0VsUKqLUQpxrbJ0Vb4YeNAn0uswnNMjuUweXiCIY5HPr4JEsIFEVr-M3LHkZo7Jee4nGjCHHVeSFPAE_Dr1oKa6CGXY3Bmd6ktIJauwXQ_EW4Vj9B34zSOGANZo76FY_v5XY",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=Robot",
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Destiny",
+    "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=Shadow",
+    "https://api.dicebear.com/7.x/fun-emoji/svg?seed=Coder"
+  ];
 
   useEffect(() => {
     const uid = localStorage.getItem('cw_userId');
@@ -79,8 +122,15 @@ export default function CareerPage() {
             {/* Large Glass Avatar */}
             <div className="glass-panel rounded-[32px] p-8 flex flex-col items-center relative overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-50"></div>
-              <div className="relative w-64 h-80 rounded-[24px] overflow-hidden border border-white/20 shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]">
-                <img alt="Detailed Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKBakTMxw1Bb8Rbb6Aq1OnYAp62HjJGGWPp95vBEFw-3O5lcNdwpLl8vmnXn-Iz5vkBIOWogL1mfDOjIQQ9ygQXzwBw4j47mY3f1gcCFz3aNJP9zSh3cKpf8a3aj8-0BYbZNnelGs0VsUKqLUQpxrbJ0Vb4YeNAn0uswnNMjuUweXiCIY5HPr4JEsIFEVr-M3LHkZo7Jee4nGjCHHVeSFPAE_Dr1oKa6CGXY3Bmd6ktIJauwXQ_EW4Vj9B34zSOGANZo76FY_v5XY"/>
+              <div className="relative w-64 h-80 rounded-[24px] overflow-hidden border border-white/20 shadow-2xl transition-transform duration-500 group-hover:scale-[1.02] cursor-pointer" onClick={() => setAvatarMenuOpen(true)}>
+                <img alt="Detailed Avatar" className="w-full h-full object-cover" src={profile?.avatar_url || PREDEFINED_AVATARS[0]}/>
+                
+                {/* Edit Overlay */}
+                <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="material-symbols-outlined text-white text-4xl mb-2" data-icon="edit">edit</span>
+                  <span className="text-white font-bold tracking-widest uppercase text-sm">Change Avatar</span>
+                </div>
+
                 <div className="absolute bottom-4 right-4 bg-primary text-on-primary px-4 py-1 rounded-full font-bold shadow-lg flex items-center gap-2">
                   <span className="text-xs uppercase tracking-tighter">Level</span>
                   <span className="text-lg">84</span>
@@ -90,6 +140,35 @@ export default function CareerPage() {
                 <h1 className="font-headline-lg text-on-surface mb-2 tracking-tight">{profile?.username || 'Unknown'}</h1>
                 <p className="text-primary font-code-md opacity-80 uppercase tracking-widest">Master Commander - Season 12</p>
               </div>
+
+              {/* Avatar Selection Modal */}
+              {avatarMenuOpen && (
+                <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setAvatarMenuOpen(false)}>
+                  <div className="glass-panel max-w-lg w-full rounded-3xl p-8 relative border border-white/10 shadow-2xl" onClick={e => e.stopPropagation()}>
+                    <button className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors" onClick={() => setAvatarMenuOpen(false)}>
+                      <span className="material-symbols-outlined text-3xl" data-icon="close">close</span>
+                    </button>
+                    <h2 className="font-headline-md text-white mb-6 tracking-tight">Select Avatar</h2>
+                    
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      {PREDEFINED_AVATARS.map((url, i) => (
+                        <div key={i} onClick={() => updateAvatar(url)} className={`cursor-pointer rounded-2xl overflow-hidden border-2 aspect-[4/5] ${profile?.avatar_url === url || (!profile?.avatar_url && i === 0) ? 'border-primary' : 'border-white/10 hover:border-white/30'} transition-all`}>
+                          <img src={url} alt={`Avatar ${i}`} className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-white/10 pt-6">
+                      <span className="text-sm text-slate-400 uppercase tracking-widest font-bold">Or use your own</span>
+                      <button onClick={() => fileInputRef.current?.click()} className="bg-primary/20 text-primary hover:bg-primary/30 px-6 py-3 rounded-full font-bold transition-colors uppercase tracking-widest text-sm flex items-center gap-2">
+                        <span className="material-symbols-outlined text-lg" data-icon="upload">upload</span>
+                        Upload Image
+                      </button>
+                      <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/*" className="hidden" />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             
             {/* Skill Radar Chart */}

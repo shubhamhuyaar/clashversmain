@@ -238,13 +238,13 @@ export default function BattlePage() {
 
   // -- AI Evaluating Overlay
   const AIOverlay = gameState.aiEvaluating && !isRevealed ? (
-    <div style={{ position:'absolute', inset:0, zIndex:50, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:24, background:'rgba(13,13,15,0.97)' }}>
-      <div style={{ fontSize:56 }}>&#x1F916;</div>
-      <p style={{ fontSize:20, fontWeight:800, color:'var(--on-surface)' }}>AI Judging Solutions</p>
-      <div style={{ display:'flex', gap:8 }}>
-        {[0,1,2].map(i => <div key={i} style={{ width:8, height:8, borderRadius:'50%', background:'var(--primary)', animation:`pulse-dot 1s ease-in-out ${i*0.3}s infinite` }} />)}
+    <div style={{ position: 'absolute', inset: 0, zIndex: 50, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, background: 'rgba(13,13,15,0.97)' }}>
+      <div style={{ fontSize: 56 }}>&#x1F916;</div>
+      <p style={{ fontSize: 20, fontWeight: 800, color: 'var(--on-surface)' }}>AI Judging Solutions</p>
+      <div style={{ display: 'flex', gap: 8 }}>
+        {[0, 1, 2].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--primary)', animation: `pulse-dot 1s ease-in-out ${i * 0.3}s infinite` }} />)}
       </div>
-      <p style={{ fontSize:13, color:'var(--secondary)', fontFamily:'var(--font-mono)' }}>Analyzing code quality</p>
+      <p style={{ fontSize: 13, color: 'var(--secondary)', fontFamily: 'var(--font-mono)' }}>Analyzing code quality</p>
     </div>
   ) : null;
 
@@ -254,16 +254,16 @@ export default function BattlePage() {
       <nav className="sticky top-0 z-10 flex justify-between items-center px-4 md:px-8 h-16 md:h-20 bg-[rgba(19,19,21,0.6)] backdrop-blur-2xl border-b border-white/5 shrink-0">
         <div className="text-xl md:text-2xl font-bold tracking-tight text-primary italic">Clashvers</div>
         <div className="hidden md:flex items-center gap-6">
-          {['Arena','Rankings','Career','Hub'].map(l=><a key={l} href={`/${l.toLowerCase()}`} className="text-on-surface-variant font-medium text-sm no-underline hover:text-white transition-colors">{l}</a>)}
+          {['Arena', 'Rankings', 'Career', 'Hub'].map(l => <a key={l} href={`/${l.toLowerCase()}`} className="text-on-surface-variant font-medium text-sm no-underline hover:text-white transition-colors">{l}</a>)}
         </div>
         <button onClick={() => router.push('/')} className="px-4 md:px-8 py-2 rounded-full bg-primary text-[#131315] font-bold text-xs md:text-sm border-none cursor-pointer hover:brightness-110 transition-all">Back to Arena</button>
       </nav>
-      
+
       <main className="relative py-12 md:py-16 px-4 md:px-8 max-w-[1280px] mx-auto w-full flex flex-col items-center">
         <div className="absolute inset-0 z-[-1] overflow-hidden pointer-events-none opacity-20">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#c2c4e8]/20 rounded-full blur-[120px]" />
         </div>
-        
+
         <section className="text-center mb-8 md:mb-12">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tighter italic uppercase text-primary drop-shadow-[0_0_20px_rgba(194,196,232,0.4)] leading-tight mb-2 md:mb-4">
             {winner === 'draw' ? 'DRAW' : iWon ? 'VICTORY' : 'DEFEAT'}
@@ -272,9 +272,9 @@ export default function BattlePage() {
             {winner === 'draw' ? 'Both Competitors Fought Hard' : iWon ? 'Arena Dominance Achieved' : 'Better Luck Next Clash'}
           </p>
         </section>
-        
+
         <section className="w-full flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8">
-          
+
           {/* Left Column: My Stats */}
           <div className="col-span-4 flex flex-col gap-6">
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-6">
@@ -282,7 +282,7 @@ export default function BattlePage() {
                 <div className="w-12 h-12 rounded-full bg-[#c2c4e8]/10 flex items-center justify-center text-xl border border-[#c2c4e8]/20 shrink-0">👤</div>
                 <div>
                   <h3 className="text-xl font-medium text-primary mb-0.5 truncate">{username}</h3>
-                  <p className="text-xs text-on-surface-variant">{iWon ? 'MVP Performance' : winner==='draw' ? 'Balanced Clash' : 'Valiant Effort'}</p>
+                  <p className="text-xs text-on-surface-variant">{iWon ? 'MVP Performance' : winner === 'draw' ? 'Balanced Clash' : 'Valiant Effort'}</p>
                 </div>
               </div>
               <div className="flex flex-col gap-2.5">
@@ -316,7 +316,7 @@ export default function BattlePage() {
               })()}
             </div>
           </div>
-          
+
           {/* Center Column: ELO Delta Circle */}
           <div className="col-span-4 flex items-center justify-center py-6 md:py-12 order-first lg:order-none">
             <div className="relative">
@@ -335,7 +335,7 @@ export default function BattlePage() {
               </div>
             </div>
           </div>
-          
+
           {/* Right Column: Opponent Stats */}
           <div className="col-span-4 flex flex-col gap-6">
             {gameState.revealData?.players.filter(p => p.userId !== userId).map(p => {
@@ -348,10 +348,10 @@ export default function BattlePage() {
                       <span className="text-xs md:text-sm font-bold text-tertiary truncate max-w-[120px]">{p.username}</span>
                       <span className="text-[10px] md:text-xs text-secondary font-mono">[{p.language}]</span>
                     </div>
-                    {oppDelta !== undefined && <span className={`px-2 md:px-2.5 py-0.5 rounded-full text-[10px] md:text-[11px] font-black font-mono ${oppDelta>=0?'bg-[#a9ceca]/15 text-secondary':'bg-[#ffb4ab]/15 text-error'}`}>{oppDelta>=0?`+${oppDelta}`:`${oppDelta}`} ELO</span>}
+                    {oppDelta !== undefined && <span className={`px-2 md:px-2.5 py-0.5 rounded-full text-[10px] md:text-[11px] font-black font-mono ${oppDelta >= 0 ? 'bg-[#a9ceca]/15 text-secondary' : 'bg-[#ffb4ab]/15 text-error'}`}>{oppDelta >= 0 ? `+${oppDelta}` : `${oppDelta}`} ELO</span>}
                   </div>
                   <div className="h-[180px] md:h-[220px]">
-                    <MonacoEditor height="100%" language={p.language} value={p.code} theme="vs-dark" options={{ ...editorOptions, readOnly:true }} />
+                    <MonacoEditor height="100%" language={p.language} value={p.code} theme="vs-dark" options={{ ...editorOptions, readOnly: true }} />
                   </div>
                   {evalData && <div className="px-4 py-2.5 border-t border-white/10 bg-black/30">
                     <p className="text-[10px] md:text-xs text-on-surface-variant leading-relaxed line-clamp-3">{evalData.feedback}</p>
@@ -362,7 +362,7 @@ export default function BattlePage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center">
                 <span className="material-symbols-outlined text-secondary mb-2 text-xl md:text-2xl">military_tech</span>
-                <span className="font-mono text-lg md:text-xl text-secondary font-medium">{iWon?'WIN':winner==='draw'?'DRAW':'LOSS'}</span>
+                <span className="font-mono text-lg md:text-xl text-secondary font-medium">{iWon ? 'WIN' : winner === 'draw' ? 'DRAW' : 'LOSS'}</span>
                 <span className="text-[9px] md:text-[10px] text-on-surface-variant uppercase tracking-[0.1em] mt-1 font-bold">Result</span>
               </div>
               <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center">
@@ -372,9 +372,9 @@ export default function BattlePage() {
               </div>
             </div>
           </div>
-          
+
         </section>
-        
+
         <section className="mt-8 md:mt-12 flex flex-col sm:flex-row flex-wrap justify-center gap-4 md:gap-6 w-full sm:w-auto">
           <button onClick={() => navigator.clipboard?.writeText(window.location.href)} className="w-full sm:w-auto bg-white/5 backdrop-blur-xl border border-white/10 px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center justify-center gap-3 text-primary cursor-pointer text-xs md:text-sm font-medium uppercase tracking-widest hover:bg-white/10 transition-colors">
             <span className="material-symbols-outlined text-lg md:text-xl">share</span> Share Result
@@ -384,15 +384,15 @@ export default function BattlePage() {
           </button>
         </section>
       </main>
-      
+
       <footer className="w-full px-6 md:px-12 py-6 flex flex-col md:flex-row justify-between items-center gap-6 bg-[rgba(2,2,10,0.4)] backdrop-blur-2xl border-t border-white/5 shrink-0 mt-auto text-[10px] tracking-widest uppercase">
         <div className="text-white/30 font-bold">2024 CLASHVERS. PROTOCOL INITIATED.</div>
         <div className="flex flex-wrap justify-center gap-4 md:gap-8">
-          {['Privacy Grid','Terms of Combat','Neural Link'].map(l=><a key={l} href="#" className="text-white/25 no-underline hover:text-white/50">{l}</a>)}
+          {['Privacy Grid', 'Terms of Combat', 'Neural Link'].map(l => <a key={l} href="#" className="text-white/25 no-underline hover:text-white/50">{l}</a>)}
         </div>
         <div className="font-bold text-[#a9ceca]/50 flex items-center gap-2">
-           <span className="w-2 h-2 rounded-full bg-[#a9ceca]/50 animate-pulse" />
-           SYSTEM_STABLE
+          <span className="w-2 h-2 rounded-full bg-[#a9ceca]/50 animate-pulse" />
+          SYSTEM_STABLE
         </div>
       </footer>
     </div>
@@ -486,9 +486,9 @@ export default function BattlePage() {
             <span className="hidden sm:inline text-xs md:text-sm text-on-surface-variant font-mono max-w-[200px] truncate">{gameState.problem?.title ?? '…'}</span>
           </div>
           <div className="md:hidden flex items-center gap-2">
-             <span className="flex items-center gap-1.5 text-[10px] font-mono text-secondary">
-               <span className={`w-2 h-2 rounded-full ${connected ? 'bg-secondary shadow-[0_0_8px_rgba(169,206,202,0.8)]' : 'bg-error shadow-none'}`} />
-             </span>
+            <span className="flex items-center gap-1.5 text-[10px] font-mono text-secondary">
+              <span className={`w-2 h-2 rounded-full ${connected ? 'bg-secondary shadow-[0_0_8px_rgba(169,206,202,0.8)]' : 'bg-error shadow-none'}`} />
+            </span>
           </div>
         </div>
 
@@ -516,7 +516,7 @@ export default function BattlePage() {
           )}
           {gameState.status === 'active' && (
             <button onClick={requestDraw} disabled={!!gameState.drawPending || gameState.drawAttempts >= 3}
-              className={`px-4 py-2 bg-white/5 border border-white/10 text-on-surface-variant rounded-lg font-mono text-xs font-bold cursor-pointer transition-opacity ${(gameState.drawPending||gameState.drawAttempts>=3) ? 'opacity-40' : 'opacity-100 hover:bg-white/10'}`}>
+              className={`px-4 py-2 bg-white/5 border border-white/10 text-on-surface-variant rounded-lg font-mono text-xs font-bold cursor-pointer transition-opacity ${(gameState.drawPending || gameState.drawAttempts >= 3) ? 'opacity-40' : 'opacity-100 hover:bg-white/10'}`}>
               🤝 {gameState.drawPending ? 'Pending…' : `Draw (${3 - gameState.drawAttempts})`}
             </button>
           )}
@@ -584,7 +584,7 @@ export default function BattlePage() {
           <div className="bg-[rgba(20,20,22,0.4)] backdrop-blur-xl border border-white/10 rounded-[24px] p-5 md:p-6 relative overflow-hidden">
             {/* Live indicator */}
             <div className="absolute top-3 right-3 p-2">
-              <span className="material-symbols-outlined text-sm md:text-base text-error" style={{ fontVariationSettings:"'FILL' 1" }}>sensors</span>
+              <span className="material-symbols-outlined text-sm md:text-base text-error" style={{ fontVariationSettings: "'FILL' 1" }}>sensors</span>
             </div>
 
             <div className="flex items-center gap-4 mb-6">
@@ -605,7 +605,7 @@ export default function BattlePage() {
               </div>
               {/* Progress bar */}
               <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-                <div className="h-full bg-secondary shadow-[0_0_10px_rgba(169,206,202,0.5)] transition-all duration-500" style={{ width:`${Math.min(100, (gameState.opponentCodeLength/500)*100)}%` }} />
+                <div className="h-full bg-secondary shadow-[0_0_10px_rgba(169,206,202,0.5)] transition-all duration-500" style={{ width: `${Math.min(100, (gameState.opponentCodeLength / 500) * 100)}%` }} />
               </div>
               {gameState.opponentCodeLength > 0 && (
                 <div className="flex items-center gap-2 text-[10px] text-[#a9ceca]/60 font-mono">
@@ -673,7 +673,7 @@ export default function BattlePage() {
           <span className="text-[10px] tracking-widest uppercase text-white/30">© 2024 PROTOCOL INITIATED.</span>
         </div>
         <div className="flex gap-8">
-          {['Privacy Grid','Terms of Combat','Neural Link'].map(l => (
+          {['Privacy Grid', 'Terms of Combat', 'Neural Link'].map(l => (
             <a key={l} href="#" className="text-[10px] tracking-widest uppercase text-white/25 no-underline hover:text-white/50">{l}</a>
           ))}
         </div>
