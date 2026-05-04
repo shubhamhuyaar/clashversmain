@@ -8,19 +8,7 @@ interface MatchHistory { id: string; player1_username: string | null; player2_us
 
 const timeAgo = (d: string) => { const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000); if (s < 60) return 'just now'; const m = Math.floor(s / 60); if (m < 60) return `${m}m ago`; const h = Math.floor(m / 60); return h < 24 ? `${h}h ago` : `${Math.floor(h / 24)}d ago`; };
 
-function TopNav({ active }: { active: string }) {
-  const router = useRouter();
-  const links = [{ id: 'arena', label: 'Arena', path: '/' }, { id: 'rankings', label: 'Rankings', path: '/leaderboard' }, { id: 'career', label: 'Career', path: '/career' }, { id: 'hub', label: 'Hub', path: '/hub' }];
-  return (
-    <header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 32px', height: 80, background: 'rgba(14,14,16,0.60)', backdropFilter: 'blur(40px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-      <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', color: '#A7A9CC', fontStyle: 'italic', cursor: 'pointer' }} onClick={() => router.push('/')}>Clashvers</div>
-      <nav style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-        {links.map(link => { const isActive = active === link.id; return (<a key={link.id} onClick={() => router.push(link.path)} style={{ letterSpacing: '-0.01em', fontWeight: 500, cursor: 'pointer', textDecoration: 'none', color: isActive ? 'var(--primary)' : 'var(--on-surface-variant)', background: isActive ? 'rgba(167,169,204,0.1)' : 'transparent', padding: isActive ? '8px 16px' : '8px 0', borderRadius: isActive ? 9999 : 0 }} onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = 'var(--on-surface)'; }} onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = 'var(--on-surface-variant)'; }}>{link.label}</a>); })}
-      </nav>
-      <button onClick={() => router.push('/')} style={{ padding: '10px 24px', background: 'var(--primary)', color: 'var(--on-primary)', fontSize: 14, fontWeight: 600, border: 'none', borderRadius: 10, cursor: 'pointer' }}>Battle Now</button>
-    </header>
-  );
-}
+import { TopNav } from '@/components/TopNav';
 
 export default function CareerPage() {
   const [profile, setProfile] = useState<PlayerProfile | null>(null);

@@ -3,57 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-/* ── Shared top nav bar — exact Stitch layout ── */
-export function TopNav({ active }: { active: string }) {
-  const router = useRouter();
-  const links = [
-    { id: 'arena', label: 'Arena', path: '/' },
-    { id: 'rankings', label: 'Rankings', path: '/leaderboard' },
-    { id: 'career', label: 'Career', path: '/career' },
-    { id: 'hub', label: 'Hub', path: '/hub' },
-  ];
-  return (
-    <header style={{
-      position: 'fixed', top: 0, width: '100%', zIndex: 50,
-      display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center',
-      padding: '0 32px', minHeight: 80,
-      background: 'rgba(14,14,16,0.60)',
-      backdropFilter: 'blur(40px)',
-      borderBottom: '1px solid rgba(255,255,255,0.05)',
-    }}>
-      {/* Logo */}
-      <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', color: '#A7A9CC', fontStyle: 'italic', cursor: 'pointer' }}
-        onClick={() => router.push('/')}>
-        Clashvers
-      </div>
-
-      {/* Nav links */}
-      <nav style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px 32px', height: '100%' }}>
-        {links.map(link => {
-          const isActive = active === link.id;
-          return (
-            <a key={link.id} onClick={() => router.push(link.path)}
-              style={{
-                fontFamily: 'var(--font-sans)', letterSpacing: '-0.01em', fontWeight: 500,
-                cursor: 'pointer', textDecoration: 'none',
-                color: isActive ? 'var(--primary)' : 'var(--on-surface-variant)',
-                background: isActive ? 'rgba(167,169,204,0.1)' : 'transparent',
-                padding: isActive ? '8px 16px' : '8px 0',
-                borderRadius: isActive ? 9999 : 0,
-                transition: 'color 0.15s',
-              }}
-              onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = 'var(--on-surface)'; }}
-              onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = 'var(--on-surface-variant)'; }}
-            >{link.label}</a>
-          );
-        })}
-      </nav>
-
-      {/* Right actions — filled by page */}
-      <div id="nav-right" style={{ display: 'flex', alignItems: 'center', gap: 24 }} />
-    </header>
-  );
-}
+import { TopNav } from '@/components/TopNav';
 
 /* ── Home Page ── */
 export default function HomePage() {
