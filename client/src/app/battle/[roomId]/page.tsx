@@ -682,18 +682,6 @@ export default function BattlePage() {
           <span className="text-[10px] tracking-widest uppercase text-secondary">Synchronized</span>
         </div>
       </footer>
-    </div>
-  );x', gap:32 }}>
-          {['Privacy Grid','Terms of Combat','Neural Link'].map(l => (
-            <a key={l} href="#" style={{ fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.25)', textDecoration:'none' }}>{l}</a>
-          ))}
-        </div>
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <div style={{ width:8, height:8, borderRadius:'50%', background:'var(--secondary)', boxShadow:'0 0 8px rgba(169,206,202,0.8)' }} />
-          <span style={{ fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--secondary)' }}>Synchronized</span>
-        </div>
-      </footer>
-
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes ping { 0% { transform: scale(0.4); opacity: 0.8; } 100% { transform: scale(2.2); opacity: 0; } }
