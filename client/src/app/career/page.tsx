@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { TopNav } from '@/components/TopNav';
 
 interface PlayerProfile { id: string; username: string; elo: number; wins: number; losses: number; }
-interface MatchHistory { id: string; player1_username: string | null; player2_username: string | null; player1_id: string | null; player2_id: string | null; winner: string | null; elo_change_p1: number | null; elo_change_p2: number | null; problem_title: string | null; created_at: string | null; ended_at: string | null; }
+interface MatchHistory { id: string; player1_username: string | null; player2_username: string | null; player1_id: string | null; player2_id: string | null; winner: string | null; player1_elo_delta: number | null; player2_elo_delta: number | null; problem_title: string | null; created_at: string | null; ended_at: string | null; }
 
 const timeAgo = (d: string) => { const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000); if (s < 60) return 'just now'; const m = Math.floor(s / 60); if (m < 60) return `${m}m ago`; const h = Math.floor(m / 60); return h < 24 ? `${h}h ago` : `${Math.floor(h / 24)}d ago`; };
 
@@ -209,7 +209,8 @@ export default function CareerPage() {
                   const opponent = getOpponent(m);
                   const isWin = result.label === 'VICTORY';
                   const isDraw = result.label === 'DRAW';
-                  const myEloChange = String(m.player1_id) === String(userId) ? m.elo_change_p1 : m.elo_change_p2;
+                  const isP1 = String(m.player1_id) === String(userId);
+                  const myEloChange = isP1 ? m.player1_elo_delta : m.player2_elo_delta;
                   const displayXp = myEloChange ? Math.abs(myEloChange) : 0;
                   
                   return (
