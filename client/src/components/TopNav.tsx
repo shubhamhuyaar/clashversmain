@@ -77,6 +77,23 @@ export function TopNav({ active }: { active: string }) {
       {menuOpen && (
         <div className="hide-on-desktop" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 40, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(16px)', paddingTop: 100, paddingLeft: 24, paddingRight: 24, flexDirection: 'column', gap: 24 }} onClick={() => setMenuOpen(false)}>
            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, background: '#131315', padding: 24, borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+              {typeof window !== 'undefined' && localStorage.getItem('cw_userId') && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24, padding: '0 8px' }}>
+                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(167,169,204,0.1)', border: '1px solid rgba(167,169,204,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }} onClick={() => { setMenuOpen(false); router.push('/career'); }}>
+                    {localStorage.getItem('cw_avatar_url') ? (
+                      <img src={localStorage.getItem('cw_avatar_url')!} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--primary)' }}>
+                        {localStorage.getItem('cw_username')?.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--on-surface)' }}>{localStorage.getItem('cw_username')}</span>
+                    <span style={{ fontSize: 11, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Combatant</span>
+                  </div>
+                </div>
+              )}
               <h2 style={{ color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.15em', fontWeight: 700, marginBottom: 8, marginLeft: 8 }}>Navigation</h2>
               {links.map(link => {
                 const isActive = active === link.id;

@@ -525,18 +525,19 @@ app.get("/api/nodes/:code", async (req, res) => {
     if (nErr || !node) { res.status(404).json({ error: "Node offline" }); return; }
 
     const { data: membersRows } = await supabase.from("node_memberships")
-      .select("user_id, role, profiles!inner(username, elo)")
+      .select("user_id, role, profiles!inner(username, elo, avatar_url)")
       .eq("node_id", node.id);
 
     const members = (membersRows ?? []).map((m: any) => ({
       userId: m.user_id,
       role: m.role,
       username: m.profiles?.username || "Unknown Unit",
-      elo: m.profiles?.elo || 1000
+      elo: m.profiles?.elo || 1000,
+      avatar_url: m.profiles?.avatar_url
     }));
 
     const { data: broadcastRows } = await supabase.from("broadcasts")
-      .select("id, content, created_at, profiles!inner(username)")
+      .select("id, content, created_at, profiles!inner(username, avatar_url)")
       .eq("node_id", node.id)
       .order("created_at", { ascending: false });
 
@@ -544,7 +545,8 @@ app.get("/api/nodes/:code", async (req, res) => {
       id: b.id,
       content: b.content,
       createdAt: b.created_at,
-      author: b.profiles?.username || "SYSADMIN"
+      author: b.profiles?.username || "SYSADMIN",
+      avatar_url: b.profiles?.avatar_url
     }));
 
     res.json({ node, members, broadcasts });
