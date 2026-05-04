@@ -169,7 +169,6 @@ export default function HubDashboard({ params }: { params: Promise<{ code: strin
   }
 
   return (
-  return (
     <div style={{ minHeight: '100vh', background: 'var(--background)', overflow: 'hidden', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-sans)' }}>
        {/* HEADER */}
        <header style={{ minHeight: 80, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', padding: '16px 32px', background: 'rgba(14,14,16,0.60)', backdropFilter: 'blur(40px)', borderBottom: '1px solid rgba(255,255,255,0.05)', flexShrink: 0, position: 'relative', zIndex: 50, gap: 16 }}>
