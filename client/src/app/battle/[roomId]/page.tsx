@@ -250,135 +250,150 @@ export default function BattlePage() {
 
   // -- Reveal Overlay
   const RevealOverlay = isRevealed ? (
-    <div style={{ position:'absolute', inset:0, zIndex:50, display:'flex', flexDirection:'column', background:'var(--background)', overflowY:'auto', fontFamily:'var(--font-sans)' }}>
-      <nav style={{ position:'sticky', top:0, zIndex:10, display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0 32px', height:80, background:'rgba(19,19,21,0.3)', backdropFilter:'blur(24px)', borderBottom:'1px solid rgba(255,255,255,0.05)', flexShrink:0 }}>
-        <div style={{ fontSize:24, fontWeight:700, letterSpacing:'-0.03em', color:'var(--primary)', fontStyle:'italic' }}>Clashvers</div>
-        <div style={{ display:'flex', alignItems:'center', gap:24 }}>
-          {['Arena','Rankings','Career','Hub'].map(l=><a key={l} href="/" style={{ color:'var(--on-surface-variant)', fontWeight:500, fontSize:14, textDecoration:'none' }}>{l}</a>)}
+    <div className="absolute inset-0 z-50 flex flex-col bg-background overflow-y-auto font-sans">
+      <nav className="sticky top-0 z-10 flex justify-between items-center px-4 md:px-8 h-16 md:h-20 bg-[rgba(19,19,21,0.6)] backdrop-blur-2xl border-b border-white/5 shrink-0">
+        <div className="text-xl md:text-2xl font-bold tracking-tight text-primary italic">Clashvers</div>
+        <div className="hidden md:flex items-center gap-6">
+          {['Arena','Rankings','Career','Hub'].map(l=><a key={l} href={`/${l.toLowerCase()}`} className="text-on-surface-variant font-medium text-sm no-underline hover:text-white transition-colors">{l}</a>)}
         </div>
-        <button onClick={() => router.push('/')} style={{ padding:'8px 32px', borderRadius:9999, background:'var(--primary)', color:'#131315', fontWeight:600, fontSize:14, border:'none', cursor:'pointer' }}>Back to Arena</button>
+        <button onClick={() => router.push('/')} className="px-4 md:px-8 py-2 rounded-full bg-primary text-[#131315] font-bold text-xs md:text-sm border-none cursor-pointer hover:brightness-110 transition-all">Back to Arena</button>
       </nav>
-      <main style={{ position:'relative', padding:'64px 32px 96px', maxWidth:1280, margin:'0 auto', width:'100%', display:'flex', flexDirection:'column', alignItems:'center' }}>
-        <div style={{ position:'absolute', inset:0, zIndex:-1, overflow:'hidden', pointerEvents:'none', opacity:0.2 }}>
-          <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:800, height:800, background:'rgba(194,196,232,0.2)', borderRadius:'50%', filter:'blur(120px)' }} />
+      
+      <main className="relative py-12 md:py-16 px-4 md:px-8 max-w-[1280px] mx-auto w-full flex flex-col items-center">
+        <div className="absolute inset-0 z-[-1] overflow-hidden pointer-events-none opacity-20">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#c2c4e8]/20 rounded-full blur-[120px]" />
         </div>
-        <section style={{ textAlign:'center', marginBottom:48 }}>
-          <h1 style={{ fontSize:64, fontWeight:600, letterSpacing:'-0.04em', fontStyle:'italic', textTransform:'uppercase', color:'var(--primary)', textShadow:'0 0 20px rgba(194,196,232,0.4)', lineHeight:1.1, marginBottom:16 }}>
+        
+        <section className="text-center mb-8 md:mb-12">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter italic uppercase text-primary drop-shadow-[0_0_20px_rgba(194,196,232,0.4)] leading-tight mb-2 md:mb-4">
             {winner === 'draw' ? 'DRAW' : iWon ? 'VICTORY' : 'DEFEAT'}
           </h1>
-          <p style={{ fontSize:20, fontWeight:500, color:'var(--on-surface-variant)', letterSpacing:'0.1em', textTransform:'uppercase' }}>
+          <p className="text-sm md:text-lg font-medium text-on-surface-variant tracking-[0.1em] md:tracking-[0.2em] uppercase">
             {winner === 'draw' ? 'Both Competitors Fought Hard' : iWon ? 'Arena Dominance Achieved' : 'Better Luck Next Clash'}
           </p>
         </section>
-        <section style={{ display:'grid', gridTemplateColumns:'repeat(12,1fr)', gap:24, width:'100%' }}>
-          <div style={{ gridColumn:'span 4', display:'flex', flexDirection:'column', gap:24 }}>
-            <div style={{ background:'rgba(255,255,255,0.03)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:24 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:16 }}>
-                <div style={{ width:48, height:48, borderRadius:'50%', background:'rgba(194,196,232,0.1)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, border:'1px solid rgba(194,196,232,0.2)' }}>&#x1F464;</div>
+        
+        <section className="w-full flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8">
+          
+          {/* Left Column: My Stats */}
+          <div className="col-span-4 flex flex-col gap-6">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-[#c2c4e8]/10 flex items-center justify-center text-xl border border-[#c2c4e8]/20 shrink-0">👤</div>
                 <div>
-                  <h3 style={{ fontSize:24, fontWeight:500, color:'var(--primary)', marginBottom:2 }}>{username}</h3>
-                  <p style={{ fontSize:13, color:'var(--on-surface-variant)' }}>{iWon ? 'MVP Performance' : winner==='draw' ? 'Balanced Clash' : 'Valiant Effort'}</p>
+                  <h3 className="text-xl font-medium text-primary mb-0.5 truncate">{username}</h3>
+                  <p className="text-xs text-on-surface-variant">{iWon ? 'MVP Performance' : winner==='draw' ? 'Balanced Clash' : 'Valiant Effort'}</p>
                 </div>
               </div>
-              <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                <div style={{ display:'flex', justifyContent:'space-between', borderBottom:'1px solid rgba(255,255,255,0.05)', paddingBottom:8 }}>
-                  <span style={{ fontSize:11, color:'var(--on-surface-variant)', textTransform:'uppercase', letterSpacing:'0.1em' }}>Code Length</span>
-                  <span style={{ fontFamily:'var(--font-mono)', color:'var(--primary)', fontSize:13 }}>{myCode.length} chars</span>
+              <div className="flex flex-col gap-2.5">
+                <div className="flex justify-between border-b border-white/5 pb-2">
+                  <span className="text-[10px] md:text-xs text-on-surface-variant uppercase tracking-widest">Code Length</span>
+                  <span className="font-mono text-primary text-xs md:text-sm">{myCode.length} chars</span>
                 </div>
-                <div style={{ display:'flex', justifyContent:'space-between', borderBottom:'1px solid rgba(255,255,255,0.05)', paddingBottom:8 }}>
-                  <span style={{ fontSize:11, color:'var(--on-surface-variant)', textTransform:'uppercase', letterSpacing:'0.1em' }}>Language</span>
-                  <span style={{ fontFamily:'var(--font-mono)', color:'var(--primary)', fontSize:13 }}>{myLang}</span>
+                <div className="flex justify-between border-b border-white/5 pb-2">
+                  <span className="text-[10px] md:text-xs text-on-surface-variant uppercase tracking-widest">Language</span>
+                  <span className="font-mono text-primary text-xs md:text-sm">{myLang}</span>
                 </div>
               </div>
             </div>
-            <div style={{ background:'rgba(255,255,255,0.03)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderLeft:'4px solid var(--primary)', borderRadius:12, padding:24 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
-                <span className="material-symbols-outlined" style={{ color:'var(--primary)', fontSize:20 }}>psychology</span>
-                <h4 style={{ fontSize:11, textTransform:'uppercase', letterSpacing:'0.1em', color:'var(--primary)', fontWeight:500 }}>AI Evaluation</h4>
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 border-l-4 border-l-primary rounded-2xl p-5 md:p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="material-symbols-outlined text-primary text-lg md:text-xl">psychology</span>
+                <h4 className="text-[10px] md:text-xs uppercase tracking-widest text-primary font-medium">AI Evaluation</h4>
               </div>
-              <p style={{ fontSize:15, color:'var(--on-surface)', fontStyle:'italic', lineHeight:1.7, marginBottom:16 }}>"{gameState.revealData?.explanation || 'Evaluating...'}"</p>
+              <p className="text-sm md:text-base text-on-surface italic leading-relaxed mb-4">"{gameState.revealData?.explanation || 'Evaluating...'}"</p>
               {(() => {
                 const e = gameState.revealData?.evaluations?.[userId];
                 return e ? (
                   <div>
-                    <p style={{ fontSize:12, color:'var(--on-surface-variant)', lineHeight:1.6, marginBottom:12 }}>{e.feedback}</p>
-                    <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-                      <span style={{ padding:'3px 10px', background:'rgba(194,196,232,0.1)', color:'var(--primary)', borderRadius:9999, fontSize:10, fontWeight:700, textTransform:'uppercase' }}>Code Quality</span>
-                      <span style={{ padding:'3px 10px', background:'rgba(169,206,202,0.1)', color:'var(--secondary)', borderRadius:9999, fontSize:10, fontWeight:700, textTransform:'uppercase' }}>Implementation</span>
+                    <p className="text-xs text-on-surface-variant leading-relaxed mb-3">{e.feedback}</p>
+                    <div className="flex gap-2 flex-wrap">
+                      <span className="px-2.5 py-1 bg-[#c2c4e8]/10 text-primary rounded-full text-[9px] md:text-[10px] font-bold uppercase">Code Quality</span>
+                      <span className="px-2.5 py-1 bg-[#a9ceca]/10 text-secondary rounded-full text-[9px] md:text-[10px] font-bold uppercase">Implementation</span>
                     </div>
                   </div>
                 ) : null;
               })()}
             </div>
           </div>
-          <div style={{ gridColumn:'span 4', display:'flex', alignItems:'center', justifyContent:'center', padding:'48px 0' }}>
-            <div style={{ position:'relative' }}>
-              <div style={{ position:'absolute', inset:0, background:'rgba(194,196,232,0.1)', borderRadius:'50%', filter:'blur(48px)' }} />
-              <div style={{ position:'relative', width:256, height:256, borderRadius:'50%', background:'rgba(255,255,255,0.03)', backdropFilter:'blur(40px)', border:'2px solid rgba(194,196,232,0.3)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
-                <div style={{ position:'absolute', bottom:0, left:0, width:'100%', height:'72%', background:'linear-gradient(to top, rgba(194,196,232,0.4), rgba(194,196,232,0.05))' }} />
-                <div style={{ position:'relative', zIndex:1, display:'flex', flexDirection:'column', alignItems:'center' }}>
-                  <span style={{ fontSize:11, color:'var(--primary)', textTransform:'uppercase', letterSpacing:'0.2em', marginBottom:8 }}>ELO Delta</span>
-                  <span style={{ fontSize:64, fontWeight:600, color:'white', lineHeight:1 }}>
+          
+          {/* Center Column: ELO Delta Circle */}
+          <div className="col-span-4 flex items-center justify-center py-6 md:py-12 order-first lg:order-none">
+            <div className="relative">
+              <div className="absolute inset-0 bg-[#c2c4e8]/10 rounded-full blur-[48px]" />
+              <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full bg-white/5 backdrop-blur-2xl border-2 border-[#c2c4e8]/30 flex flex-col items-center justify-center overflow-hidden">
+                <div className="absolute bottom-0 left-0 w-full h-[72%] bg-gradient-to-t from-[#c2c4e8]/40 to-transparent" />
+                <div className="relative z-10 flex flex-col items-center">
+                  <span className="text-[10px] md:text-xs text-primary uppercase tracking-[0.2em] mb-2 font-bold">ELO Delta</span>
+                  <span className="text-5xl md:text-7xl font-semibold text-white leading-none">
                     {(() => { const d = gameState.eloDeltas?.[userId]; return d !== undefined ? (d >= 0 ? `+${d}` : `${d}`) : '?'; })()}
                   </span>
-                  <div style={{ marginTop:8, padding:'4px 12px', background:'rgba(2,2,10,0.8)', borderRadius:9999, border:'1px solid rgba(255,255,255,0.1)' }}>
-                    <span style={{ fontFamily:'var(--font-mono)', color:'var(--primary)', fontSize:12 }}>{me?.elo ? `${me.elo} ELO` : 'Ranked'}</span>
+                  <div className="mt-3 md:mt-4 px-3 md:px-4 py-1.5 bg-[#02020a]/80 rounded-full border border-white/10">
+                    <span className="font-mono text-primary text-[10px] md:text-xs">{me?.elo ? `${me.elo} ELO` : 'Ranked'}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div style={{ gridColumn:'span 4', display:'flex', flexDirection:'column', gap:24 }}>
+          
+          {/* Right Column: Opponent Stats */}
+          <div className="col-span-4 flex flex-col gap-6">
             {gameState.revealData?.players.filter(p => p.userId !== userId).map(p => {
               const evalData = gameState.revealData?.evaluations?.[p.userId];
               const oppDelta = gameState.eloDeltas?.[p.userId];
               return (
-                <div key={p.userId} style={{ background:'rgba(255,255,255,0.03)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, overflow:'hidden' }}>
-                  <div style={{ padding:'12px 20px', background:'rgba(255,255,255,0.05)', borderBottom:'1px solid rgba(255,255,255,0.1)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                      <span style={{ fontSize:13, fontWeight:700, color:'var(--tertiary)' }}>{p.username}</span>
-                      <span style={{ fontSize:11, color:'var(--secondary)', fontFamily:'var(--font-mono)' }}>[{p.language}]</span>
+                <div key={p.userId} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden flex flex-col">
+                  <div className="px-4 md:px-5 py-3 bg-white/5 border-b border-white/10 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs md:text-sm font-bold text-tertiary truncate max-w-[120px]">{p.username}</span>
+                      <span className="text-[10px] md:text-xs text-secondary font-mono">[{p.language}]</span>
                     </div>
-                    {oppDelta !== undefined && <span style={{ padding:'2px 10px', borderRadius:9999, fontSize:11, fontWeight:900, background:oppDelta>=0?'rgba(169,206,202,0.12)':'rgba(255,180,171,0.12)', color:oppDelta>=0?'var(--secondary)':'var(--error)', fontFamily:'var(--font-mono)' }}>{oppDelta>=0?`+${oppDelta}`:`${oppDelta}`} ELO</span>}
+                    {oppDelta !== undefined && <span className={`px-2 md:px-2.5 py-0.5 rounded-full text-[10px] md:text-[11px] font-black font-mono ${oppDelta>=0?'bg-[#a9ceca]/15 text-secondary':'bg-[#ffb4ab]/15 text-error'}`}>{oppDelta>=0?`+${oppDelta}`:`${oppDelta}`} ELO</span>}
                   </div>
-                  <div style={{ height:180 }}>
+                  <div className="h-[180px] md:h-[220px]">
                     <MonacoEditor height="100%" language={p.language} value={p.code} theme="vs-dark" options={{ ...editorOptions, readOnly:true }} />
                   </div>
-                  {evalData && <div style={{ padding:'10px 16px', borderTop:'1px solid rgba(255,255,255,0.08)', background:'rgba(0,0,0,0.3)' }}>
-                    <p style={{ fontSize:11, color:'var(--on-surface-variant)', lineHeight:1.6 }}>{evalData.feedback}</p>
+                  {evalData && <div className="px-4 py-2.5 border-t border-white/10 bg-black/30">
+                    <p className="text-[10px] md:text-xs text-on-surface-variant leading-relaxed line-clamp-3">{evalData.feedback}</p>
                   </div>}
                 </div>
               );
             })}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
-              <div style={{ background:'rgba(255,255,255,0.03)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:16, display:'flex', flexDirection:'column', alignItems:'center' }}>
-                <span className="material-symbols-outlined" style={{ color:'var(--secondary)', marginBottom:8 }}>military_tech</span>
-                <span style={{ fontFamily:'var(--font-mono)', fontSize:20, color:'var(--secondary)', fontWeight:500 }}>{iWon?'WIN':winner==='draw'?'DRAW':'LOSS'}</span>
-                <span style={{ fontSize:10, color:'var(--on-surface-variant)', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:4 }}>Result</span>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center">
+                <span className="material-symbols-outlined text-secondary mb-2 text-xl md:text-2xl">military_tech</span>
+                <span className="font-mono text-lg md:text-xl text-secondary font-medium">{iWon?'WIN':winner==='draw'?'DRAW':'LOSS'}</span>
+                <span className="text-[9px] md:text-[10px] text-on-surface-variant uppercase tracking-[0.1em] mt-1 font-bold">Result</span>
               </div>
-              <div style={{ background:'rgba(255,255,255,0.03)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12, padding:16, display:'flex', flexDirection:'column', alignItems:'center' }}>
-                <span className="material-symbols-outlined" style={{ color:'var(--tertiary)', marginBottom:8 }}>code</span>
-                <span style={{ fontFamily:'var(--font-mono)', fontSize:16, color:'var(--tertiary)', fontWeight:500 }}>{myLang}</span>
-                <span style={{ fontSize:10, color:'var(--on-surface-variant)', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:4 }}>Language</span>
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center">
+                <span className="material-symbols-outlined text-tertiary mb-2 text-xl md:text-2xl">code</span>
+                <span className="font-mono text-sm md:text-base text-tertiary font-medium uppercase truncate max-w-[80px]">{myLang}</span>
+                <span className="text-[9px] md:text-[10px] text-on-surface-variant uppercase tracking-[0.1em] mt-1 font-bold">Language</span>
               </div>
             </div>
           </div>
+          
         </section>
-        <section style={{ marginTop:48, display:'flex', flexWrap:'wrap', justifyContent:'center', gap:24 }}>
-          <button onClick={() => navigator.clipboard?.writeText(window.location.href)} style={{ background:'rgba(255,255,255,0.03)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', padding:'16px 32px', borderRadius:24, display:'flex', alignItems:'center', gap:16, color:'var(--primary)', cursor:'pointer', fontSize:14, fontWeight:500, textTransform:'uppercase', letterSpacing:'0.05em' }}>
-            <span className="material-symbols-outlined">share</span> Share Result
+        
+        <section className="mt-8 md:mt-12 flex flex-col sm:flex-row flex-wrap justify-center gap-4 md:gap-6 w-full sm:w-auto">
+          <button onClick={() => navigator.clipboard?.writeText(window.location.href)} className="w-full sm:w-auto bg-white/5 backdrop-blur-xl border border-white/10 px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center justify-center gap-3 text-primary cursor-pointer text-xs md:text-sm font-medium uppercase tracking-widest hover:bg-white/10 transition-colors">
+            <span className="material-symbols-outlined text-lg md:text-xl">share</span> Share Result
           </button>
-          <button onClick={() => router.push('/')} style={{ background:'var(--primary)', padding:'16px 40px', borderRadius:24, display:'flex', alignItems:'center', gap:16, color:'#131315', cursor:'pointer', fontSize:14, fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', border:'none', boxShadow:'0 20px 40px rgba(194,196,232,0.2)' }}>
-            <span className="material-symbols-outlined">play_arrow</span> Queue Next
+          <button onClick={() => router.push('/')} className="w-full sm:w-auto bg-primary px-8 md:px-10 py-3 md:py-4 rounded-full flex items-center justify-center gap-3 text-[#131315] cursor-pointer text-xs md:text-sm font-bold uppercase tracking-widest border-none shadow-[0_10px_30px_rgba(194,196,232,0.2)] hover:brightness-110 hover:-translate-y-1 transition-all">
+            <span className="material-symbols-outlined text-lg md:text-xl">play_arrow</span> Queue Next
           </button>
         </section>
       </main>
-      <footer style={{ width:'100%', padding:'24px 48px', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(2,2,10,0.2)', backdropFilter:'blur(20px)', borderTop:'1px solid rgba(255,255,255,0.05)', flexShrink:0, fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase' }}>
-        <div style={{ color:'rgba(255,255,255,0.3)' }}>2024 CLASHVERS. PROTOCOL INITIATED.</div>
-        <div style={{ display:'flex', gap:32 }}>
-          {['Privacy Grid','Terms of Combat','Neural Link'].map(l=><a key={l} href="#" style={{ color:'rgba(255,255,255,0.25)', textDecoration:'none' }}>{l}</a>)}
+      
+      <footer className="w-full px-6 md:px-12 py-6 flex flex-col md:flex-row justify-between items-center gap-6 bg-[rgba(2,2,10,0.4)] backdrop-blur-2xl border-t border-white/5 shrink-0 mt-auto text-[10px] tracking-widest uppercase">
+        <div className="text-white/30 font-bold">2024 CLASHVERS. PROTOCOL INITIATED.</div>
+        <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+          {['Privacy Grid','Terms of Combat','Neural Link'].map(l=><a key={l} href="#" className="text-white/25 no-underline hover:text-white/50">{l}</a>)}
         </div>
-        <div style={{ fontWeight:700, color:'rgba(169,206,202,0.5)' }}>SYSTEM_STABLE</div>
+        <div className="font-bold text-[#a9ceca]/50 flex items-center gap-2">
+           <span className="w-2 h-2 rounded-full bg-[#a9ceca]/50 animate-pulse" />
+           SYSTEM_STABLE
+        </div>
       </footer>
     </div>
   ) : null;
@@ -387,13 +402,12 @@ export default function BattlePage() {
   // ── Draw Request Modal ─────────────────────────────────────────────────────
   const isOpponentDraw = gameState.drawPending && gameState.drawRequesterName !== null;
   const DrawModal = isOpponentDraw ? (
-    <div className="absolute inset-0 z-40 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
-      <div className="flex flex-col items-center gap-6 text-center" style={{
+    <div className="absolute inset-0 z-40 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
+      <div className="flex flex-col items-center gap-6 text-center w-full max-w-[380px]" style={{
         background: 'rgba(10,0,0,0.92)',
         border: '1px solid rgba(255,180,171,0.3)',
         borderRadius: '1.5rem',
-        padding: '2.5rem 3rem',
-        minWidth: 360,
+        padding: '2.5rem 2rem',
         boxShadow: '0 0 60px rgba(255,180,171,0.15), inset 0 1px 0 rgba(255,255,255,0.05)',
       }}>
         <div className="text-5xl">🤝</div>
@@ -404,15 +418,15 @@ export default function BattlePage() {
           </p>
         </div>
         <div className="h-px w-full" style={{ background: 'rgba(255,180,171,0.15)' }} />
-        <div className="flex gap-4 w-full">
+        <div className="flex flex-col sm:flex-row gap-4 w-full">
           <button
             onClick={() => { confirmDraw(); }}
-            className="flex-1 py-3 rounded-xl font-bold text-white text-sm tracking-widest uppercase transition-all hover:brightness-110"
+            className="flex-1 py-3 px-2 rounded-xl font-bold text-white text-xs sm:text-sm tracking-widest uppercase transition-all hover:brightness-110"
             style={{ background: 'var(--primary)', boxShadow: '0 4px 20px rgba(255,180,171,0.3)' }}
           >✓ Accept</button>
           <button
             onClick={() => { rejectDraw(); }}
-            className="flex-1 py-3 rounded-xl font-bold text-sm tracking-widest uppercase transition-all hover:bg-white/5"
+            className="flex-1 py-3 px-2 rounded-xl font-bold text-xs sm:text-sm tracking-widest uppercase transition-all hover:bg-white/5"
             style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'var(--secondary)' }}
           >✕ Reject</button>
         </div>
@@ -423,13 +437,12 @@ export default function BattlePage() {
   // ── Finish Early Modal ─────────────────────────────────────────────────────
   const isOpponentFinish = gameState.finishPending && gameState.finishRequesterName !== null;
   const FinishModal = isOpponentFinish ? (
-    <div className="absolute inset-0 z-40 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
-      <div className="flex flex-col items-center gap-6 text-center" style={{
+    <div className="absolute inset-0 z-40 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
+      <div className="flex flex-col items-center gap-6 text-center w-full max-w-[380px]" style={{
         background: 'rgba(10,0,0,0.92)',
         border: '1px solid rgba(255,180,171,0.3)',
         borderRadius: '1.5rem',
-        padding: '2.5rem 3rem',
-        minWidth: 380,
+        padding: '2.5rem 2rem',
         boxShadow: '0 0 60px rgba(255,180,171,0.15), inset 0 1px 0 rgba(255,255,255,0.05)',
       }}>
         <div className="text-5xl">🏁</div>
@@ -440,15 +453,15 @@ export default function BattlePage() {
           </p>
         </div>
         <div className="h-px w-full" style={{ background: 'rgba(255,180,171,0.15)' }} />
-        <div className="flex gap-4 w-full">
+        <div className="flex flex-col sm:flex-row gap-4 w-full">
           <button
             onClick={() => { confirmFinish(); }}
-            className="flex-1 py-3 rounded-xl font-bold text-white text-sm tracking-widest uppercase transition-all hover:brightness-110"
+            className="flex-1 py-3 px-2 rounded-xl font-bold text-white text-xs sm:text-sm tracking-widest uppercase transition-all hover:brightness-110 flex items-center justify-center gap-2"
             style={{ background: 'var(--primary)', boxShadow: '0 4px 20px rgba(255,180,171,0.3)' }}
           >🏁 Submit Now</button>
           <button
             onClick={() => { rejectFinish(); }}
-            className="flex-1 py-3 rounded-xl font-bold text-sm tracking-widest uppercase transition-all hover:bg-white/5"
+            className="flex-1 py-3 px-2 rounded-xl font-bold text-xs sm:text-sm tracking-widest uppercase transition-all hover:bg-white/5 flex items-center justify-center gap-2"
             style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'var(--secondary)' }}
           >⌨ Keep Coding</button>
         </div>
@@ -458,45 +471,52 @@ export default function BattlePage() {
 
   // ── Arena ──────────────────────────────────────────────────────────────────
   return (
-    <div style={{ height:'100vh', display:'flex', flexDirection:'column', background:'var(--background)', overflow:'hidden', position:'relative', fontFamily:'var(--font-sans)' }}>
+    <div className="h-screen flex flex-col bg-background overflow-hidden relative font-sans">
       {AIOverlay}
       {RevealOverlay}
       {DrawModal}
       {FinishModal}
 
       {/* Top Nav */}
-      <nav style={{ position:'fixed', top:0, width:'100%', zIndex:50, display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0 32px', height:80, background:'rgba(19,19,21,0.3)', backdropFilter:'blur(24px)', borderBottom:'1px solid rgba(255,255,255,0.05)', boxShadow:'0 4px 24px rgba(0,0,0,0.4)' }}>
+      <nav className="fixed top-0 w-full z-50 flex flex-wrap md:flex-nowrap justify-between items-center px-4 md:px-8 py-3 md:py-0 min-h-[80px] bg-[rgba(19,19,21,0.6)] backdrop-blur-2xl border-b border-white/5 shadow-[0_4px_24px_rgba(0,0,0,0.4)] gap-y-3">
         {/* Left: Logo + problem */}
-        <div style={{ display:'flex', alignItems:'center', gap:32 }}>
-          <span style={{ fontSize:24, fontWeight:700, letterSpacing:'-0.03em', color:'var(--primary)', fontStyle:'italic' }}>Clashvers</span>
-          <span style={{ fontSize:13, color:'var(--on-surface-variant)', fontFamily:'var(--font-mono)', maxWidth:240, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{gameState.problem?.title ?? '…'}</span>
+        <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+          <div className="flex items-center gap-4">
+            <span className="text-xl md:text-2xl font-bold tracking-tight text-primary italic">Clashvers</span>
+            <span className="hidden sm:inline text-xs md:text-sm text-on-surface-variant font-mono max-w-[200px] truncate">{gameState.problem?.title ?? '…'}</span>
+          </div>
+          <div className="md:hidden flex items-center gap-2">
+             <span className="flex items-center gap-1.5 text-[10px] font-mono text-secondary">
+               <span className={`w-2 h-2 rounded-full ${connected ? 'bg-secondary shadow-[0_0_8px_rgba(169,206,202,0.8)]' : 'bg-error shadow-none'}`} />
+             </span>
+          </div>
         </div>
 
         {/* Center: Timer pill */}
-        <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', flexDirection:'column', alignItems:'center' }}>
-          <div style={{ padding:'4px 24px', background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderTop:'1px solid rgba(194,196,232,0.3)', borderRadius:9999, display:'flex', alignItems:'center', gap:12 }}>
-            <span className="material-symbols-outlined" style={{ fontSize:16, color:'var(--secondary)' }}>timer</span>
-            <span style={{ fontFamily:'var(--font-mono)', fontSize:24, fontWeight:500, color:'var(--secondary)', letterSpacing:'0.1em', textShadow:'0 0 10px rgba(169,206,202,0.8), 0 0 20px rgba(169,206,202,0.4)' }}>
+        <div className="w-full md:w-auto flex justify-center md:absolute md:left-1/2 md:-translate-x-1/2 order-last md:order-none pb-2 md:pb-0">
+          <div className="px-6 py-1.5 bg-[rgba(20,20,22,0.6)] backdrop-blur-3xl border border-white/10 border-t-[#c2c4e8]/30 rounded-full flex items-center gap-3">
+            <span className="material-symbols-outlined text-sm md:text-base text-secondary">timer</span>
+            <span className="font-mono text-xl md:text-2xl font-medium text-secondary tracking-widest drop-shadow-[0_0_10px_rgba(169,206,202,0.8)]">
               {timeLeft !== null ? fmtTime(timeLeft) : '00:00'}
             </span>
           </div>
         </div>
 
         {/* Right: Status + actions */}
-        <div style={{ display:'flex', alignItems:'center', gap:16 }}>
-          <span style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, fontFamily:'var(--font-mono)', color: connected ? 'var(--secondary)' : 'var(--error)' }}>
-            <span style={{ width:8, height:8, borderRadius:'50%', background: connected ? 'var(--secondary)' : 'var(--error)', boxShadow: connected ? '0 0 8px rgba(169,206,202,0.8)' : 'none', display:'inline-block' }} />
+        <div className="hidden md:flex items-center gap-4">
+          <span className={`flex items-center gap-1.5 text-xs font-mono ${connected ? 'text-secondary' : 'text-error'}`}>
+            <span className={`w-2 h-2 rounded-full inline-block ${connected ? 'bg-secondary shadow-[0_0_8px_rgba(169,206,202,0.8)]' : 'bg-error'}`} />
             {connected ? 'Synchronized' : 'Offline'}
           </span>
           {gameState.status === 'active' && (
             <button onClick={requestFinish} disabled={!!gameState.finishPending}
-              style={{ padding:'8px 16px', background:'rgba(194,196,232,0.1)', border:'1px solid rgba(194,196,232,0.3)', color:'var(--primary)', borderRadius:8, fontFamily:'var(--font-mono)', fontSize:11, fontWeight:700, cursor:'pointer', opacity: gameState.finishPending ? 0.4 : 1 }}>
+              className={`px-4 py-2 bg-[#c2c4e8]/10 border border-[#c2c4e8]/30 text-primary rounded-lg font-mono text-xs font-bold cursor-pointer transition-opacity ${gameState.finishPending ? 'opacity-40' : 'opacity-100 hover:bg-[#c2c4e8]/20'}`}>
               🏁 {gameState.finishPending ? 'Pending…' : 'Submit Early'}
             </button>
           )}
           {gameState.status === 'active' && (
             <button onClick={requestDraw} disabled={!!gameState.drawPending || gameState.drawAttempts >= 3}
-              style={{ padding:'8px 16px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', color:'var(--on-surface-variant)', borderRadius:8, fontFamily:'var(--font-mono)', fontSize:11, fontWeight:700, cursor:'pointer', opacity:(gameState.drawPending||gameState.drawAttempts>=3)?0.4:1 }}>
+              className={`px-4 py-2 bg-white/5 border border-white/10 text-on-surface-variant rounded-lg font-mono text-xs font-bold cursor-pointer transition-opacity ${(gameState.drawPending||gameState.drawAttempts>=3) ? 'opacity-40' : 'opacity-100 hover:bg-white/10'}`}>
               🤝 {gameState.drawPending ? 'Pending…' : `Draw (${3 - gameState.drawAttempts})`}
             </button>
           )}
@@ -504,21 +524,21 @@ export default function BattlePage() {
       </nav>
 
       {/* Main content */}
-      <main style={{ flex:1, marginTop:80, padding:'24px 32px', display:'flex', gap:24, overflow:'hidden', height:'calc(100vh - 80px)' }}>
+      <main className="flex-1 mt-[110px] md:mt-[80px] p-4 md:p-8 flex flex-col lg:flex-row gap-6 overflow-y-auto lg:overflow-hidden h-[calc(100vh-110px)] md:h-[calc(100vh-80px)]">
 
         {/* Left: Monaco Editor */}
-        <section style={{ flex:1, display:'flex', flexDirection:'column', gap:16, minWidth:0 }}>
+        <section className="flex-1 flex flex-col gap-4 min-w-0 min-h-[400px] lg:min-h-0">
           {/* Editor title bar */}
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 8px' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-              <span className="material-symbols-outlined" style={{ fontSize:20, color:'var(--primary)' }}>terminal</span>
-              <span style={{ fontSize:20, fontWeight:500, color:'var(--on-surface)', letterSpacing:'-0.01em' }}>{username || 'You'}.{myLang}</span>
-              <span style={{ padding:'2px 8px', borderRadius:4, fontSize:10, fontWeight:700, background:'rgba(194,196,232,0.1)', color:'var(--primary)', border:'1px solid rgba(194,196,232,0.2)', textTransform:'uppercase', letterSpacing:'0.1em' }}>Write Mode</span>
+          <div className="flex items-center justify-between px-2">
+            <div className="flex items-center gap-2 md:gap-3">
+              <span className="material-symbols-outlined text-lg md:text-xl text-primary">terminal</span>
+              <span className="text-base md:text-xl font-medium text-on-surface tracking-tight truncate max-w-[120px] md:max-w-none">{username || 'You'}.{myLang}</span>
+              <span className="hidden sm:inline px-2 py-0.5 rounded text-[10px] font-bold bg-[#c2c4e8]/10 text-primary border border-[#c2c4e8]/20 uppercase tracking-widest">Write Mode</span>
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-              <span style={{ fontSize:13, color:'var(--outline)', letterSpacing:'0.02em', fontFamily:'var(--font-mono)' }}>Chars: {myCode.length}</span>
+            <div className="flex items-center gap-3">
+              <span className="hidden md:inline text-xs text-outline tracking-wider font-mono">Chars: {myCode.length}</span>
               <select value={myLang} onChange={e => setMyLang(e.target.value)}
-                style={{ padding:'4px 10px', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'var(--on-surface)', borderRadius:6, fontFamily:'var(--font-mono)', fontSize:11, outline:'none', cursor:'pointer' }}>
+                className="px-2 py-1 bg-white/5 border border-white/10 text-on-surface rounded-md font-mono text-xs outline-none cursor-pointer">
                 {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
               </select>
             </div>
@@ -526,75 +546,75 @@ export default function BattlePage() {
 
           {/* Problem collapsed bar */}
           {!problemOpen && (
-            <button onClick={() => setProblemOpen(true)} style={{ padding:'6px 16px', textAlign:'left', background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:8, color:'var(--secondary)', fontSize:11, fontFamily:'var(--font-mono)', cursor:'pointer' }}>
+            <button onClick={() => setProblemOpen(true)} className="px-4 py-1.5 text-left bg-white/5 border border-white/10 rounded-lg text-secondary text-xs font-mono cursor-pointer truncate">
               📋 {gameState.problem?.title} — click to expand
             </button>
           )}
           {problemOpen && gameState.problem && (
-            <div style={{ flexShrink:0, maxHeight:140, overflowY:'auto', padding:'12px 16px', position:'relative', background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12 }}>
-              <button onClick={() => setProblemOpen(false)} style={{ position:'absolute', top:8, right:12, background:'none', border:'none', color:'var(--secondary)', cursor:'pointer', fontSize:14 }}>✕</button>
-              <p style={{ fontWeight:600, color:'var(--on-surface)', marginBottom:4, fontSize:13 }}>{gameState.problem.title}</p>
-              <p style={{ color:'var(--on-surface-variant)', fontSize:12, lineHeight:1.65, marginBottom:6 }}>{gameState.problem.description}</p>
-              <pre style={{ color:'var(--outline)', fontSize:11, fontFamily:'var(--font-mono)', whiteSpace:'pre-wrap', wordBreak:'break-all', lineHeight:1.5, margin:0 }}>{gameState.problem.examples}</pre>
+            <div className="shrink-0 max-h-[140px] overflow-y-auto p-3 md:p-4 relative bg-[rgba(20,20,22,0.6)] backdrop-blur-xl border border-white/10 rounded-xl">
+              <button onClick={() => setProblemOpen(false)} className="absolute top-2 right-3 bg-transparent border-none text-secondary cursor-pointer text-sm">✕</button>
+              <p className="font-semibold text-on-surface mb-1 text-xs md:text-sm">{gameState.problem.title}</p>
+              <p className="text-on-surface-variant text-xs leading-relaxed mb-2">{gameState.problem.description}</p>
+              <pre className="text-outline text-[10px] md:text-xs font-mono whitespace-pre-wrap break-all leading-relaxed m-0">{gameState.problem.examples}</pre>
             </div>
           )}
 
           {/* Glass editor card */}
-          <div style={{ flex:1, minHeight:0, display:'flex', flexDirection:'column', background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(194,196,232,0.2)', borderRadius:24, overflow:'hidden', boxShadow:'0 0 15px rgba(194,196,232,0.1)' }}>
+          <div className="flex-1 min-h-[300px] lg:min-h-0 flex flex-col bg-[rgba(20,20,22,0.4)] backdrop-blur-xl border border-[#c2c4e8]/20 rounded-2xl md:rounded-[24px] overflow-hidden shadow-[0_0_15px_rgba(194,196,232,0.1)]">
             {/* Editor chrome bar */}
-            <div style={{ height:40, background:'rgba(255,255,255,0.05)', borderBottom:'1px solid rgba(255,255,255,0.1)', display:'flex', alignItems:'center', padding:'0 16px', justifyContent:'space-between', flexShrink:0 }}>
-              <div style={{ display:'flex', gap:8 }}>
-                <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(255,180,171,0.4)' }} />
-                <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(220,197,145,0.4)' }} />
-                <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(169,206,202,0.4)' }} />
+            <div className="h-8 md:h-10 bg-white/5 border-b border-white/10 flex items-center px-4 justify-between shrink-0">
+              <div className="flex gap-2">
+                <div className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-[#ffb4ab]/60" />
+                <div className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-[#dcc591]/60" />
+                <div className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-[#a9ceca]/60" />
               </div>
-              <span style={{ fontFamily:'var(--font-mono)', fontSize:10, color:'rgba(255,255,255,0.3)', letterSpacing:'0.05em' }}>Clashvers-IDE v1.0.4</span>
+              <span className="font-mono text-[9px] md:text-[10px] text-white/30 tracking-wider">Clashvers-IDE v1.0.4</span>
             </div>
             {/* Monaco */}
-            <div style={{ flex:1, minHeight:0 }}>
+            <div className="flex-1 min-h-0 relative z-0">
               <MonacoEditor height="100%" language={myLang} value={myCode} theme="vs-dark" onChange={handleCodeChange} options={editorOptions} />
             </div>
           </div>
         </section>
 
         {/* Right: HUD Sidebar */}
-        <aside style={{ width:384, display:'flex', flexDirection:'column', gap:24, overflow:'hidden' }}>
+        <aside className="w-full lg:w-96 flex flex-col gap-6 shrink-0 z-10 pb-8 md:pb-0">
 
           {/* Opponent Card */}
-          <div style={{ background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:24, padding:24, position:'relative', overflow:'hidden' }}>
+          <div className="bg-[rgba(20,20,22,0.4)] backdrop-blur-xl border border-white/10 rounded-[24px] p-5 md:p-6 relative overflow-hidden">
             {/* Live indicator */}
-            <div style={{ position:'absolute', top:12, right:12, padding:8 }}>
-              <span className="material-symbols-outlined" style={{ fontSize:16, color:'var(--error)', fontVariationSettings:"'FILL' 1" }}>sensors</span>
+            <div className="absolute top-3 right-3 p-2">
+              <span className="material-symbols-outlined text-sm md:text-base text-error" style={{ fontVariationSettings:"'FILL' 1" }}>sensors</span>
             </div>
 
-            <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:24 }}>
-              <div style={{ position:'relative' }}>
-                <div style={{ width:64, height:64, borderRadius:12, border:'1px solid rgba(255,255,255,0.1)', overflow:'hidden', background:'rgba(116,118,143,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:28 }}>⚔</div>
-                <div style={{ position:'absolute', bottom:-4, right:-4, padding:'2px 6px', background:'var(--error)', fontSize:8, fontWeight:700, borderRadius:4, color:'white', textTransform:'uppercase', letterSpacing:'-0.02em' }}>LIVE</div>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="relative shrink-0">
+                <div className="w-12 md:w-16 h-12 md:h-16 rounded-xl border border-white/10 overflow-hidden bg-[#74768f]/20 flex items-center justify-center text-xl md:text-2xl">⚔</div>
+                <div className="absolute -bottom-1 -right-1 px-1.5 py-0.5 bg-error text-[8px] md:text-[10px] font-bold rounded text-white uppercase tracking-tighter">LIVE</div>
               </div>
-              <div>
-                <h3 style={{ fontSize:20, fontWeight:500, color:'var(--on-surface)', lineHeight:1.2 }}>{opponent?.username ?? 'Opponent'}</h3>
-                <p style={{ fontSize:13, color:'var(--outline)', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:2 }}>{opponent?.elo ? `${opponent.elo} ELO` : 'Unknown'}</p>
+              <div className="min-w-0">
+                <h3 className="text-lg md:text-xl font-medium text-on-surface leading-snug truncate">{opponent?.username ?? 'Opponent'}</h3>
+                <p className="text-xs text-outline uppercase tracking-widest mt-0.5">{opponent?.elo ? `${opponent.elo} ELO` : 'Unknown'}</p>
               </div>
             </div>
 
-            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-              <div style={{ display:'flex', justifyContent:'space-between', fontSize:13, marginBottom:4 }}>
-                <span style={{ color:'var(--outline)', textTransform:'uppercase', letterSpacing:'0.1em', fontSize:10 }}>Code Progress</span>
-                <span style={{ color:'var(--secondary)', fontFamily:'var(--font-mono)', fontSize:13 }}>{gameState.opponentCodeLength} chars</span>
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-outline uppercase tracking-widest text-[10px]">Code Progress</span>
+                <span className="text-secondary font-mono text-xs">{gameState.opponentCodeLength} chars</span>
               </div>
               {/* Progress bar */}
-              <div style={{ height:8, width:'100%', background:'rgba(255,255,255,0.05)', borderRadius:9999, overflow:'hidden', border:'1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ height:'100%', background:'var(--secondary)', boxShadow:'0 0 10px rgba(169,206,202,0.5)', transition:'width 0.5s ease', width:`${Math.min(100, (gameState.opponentCodeLength/500)*100)}%` }} />
+              <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <div className="h-full bg-secondary shadow-[0_0_10px_rgba(169,206,202,0.5)] transition-all duration-500" style={{ width:`${Math.min(100, (gameState.opponentCodeLength/500)*100)}%` }} />
               </div>
               {gameState.opponentCodeLength > 0 && (
-                <div style={{ display:'flex', alignItems:'center', gap:8, fontSize:10, color:'rgba(169,206,202,0.6)', fontFamily:'var(--font-mono)' }}>
-                  <span className="material-symbols-outlined" style={{ fontSize:12 }}>keyboard</span>
+                <div className="flex items-center gap-2 text-[10px] text-[#a9ceca]/60 font-mono">
+                  <span className="material-symbols-outlined text-xs">keyboard</span>
                   OPPONENT IS TYPING...
                 </div>
               )}
               {!isRevealed && gameState.opponentCodeLength === 0 && (
-                <div style={{ display:'flex', alignItems:'center', gap:8, fontSize:10, color:'var(--outline)', fontFamily:'var(--font-mono)' }}>
+                <div className="flex items-center gap-2 text-[10px] text-outline font-mono">
                   🔒 Code locked until match ends
                 </div>
               )}
@@ -602,44 +622,44 @@ export default function BattlePage() {
           </div>
 
           {/* Stats bento grid */}
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
-            <div style={{ background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:24, padding:24 }}>
-              <div style={{ fontSize:10, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>My ELO</div>
-              <div style={{ fontSize:24, fontWeight:500, color:'var(--on-surface)', fontFamily:'var(--font-mono)' }}>{me?.elo ?? '—'}</div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-[rgba(20,20,22,0.4)] backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-[24px] p-4 md:p-6">
+              <div className="text-[10px] text-white/30 uppercase tracking-wider mb-1">My ELO</div>
+              <div className="text-xl md:text-2xl font-medium text-on-surface font-mono">{me?.elo ?? '—'}</div>
             </div>
-            <div style={{ background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:24, padding:24 }}>
-              <div style={{ fontSize:10, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Enemy ELO</div>
-              <div style={{ fontSize:24, fontWeight:500, color:'var(--on-surface)', fontFamily:'var(--font-mono)' }}>{opponent?.elo ?? '—'}</div>
+            <div className="bg-[rgba(20,20,22,0.4)] backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-[24px] p-4 md:p-6">
+              <div className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Enemy ELO</div>
+              <div className="text-xl md:text-2xl font-medium text-on-surface font-mono">{opponent?.elo ?? '—'}</div>
             </div>
           </div>
 
           {/* System Log (replaces chat) */}
-          <div style={{ flex:1, minHeight:0, display:'flex', flexDirection:'column', background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:24, overflow:'hidden' }}>
-            <div style={{ background:'rgba(255,255,255,0.05)', borderBottom:'1px solid rgba(255,255,255,0.1)', padding:'8px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
-              <span style={{ fontFamily:'var(--font-mono)', fontSize:10, color:'var(--outline)', textTransform:'uppercase', letterSpacing:'0.1em' }}>System Log</span>
-              <span className="material-symbols-outlined" style={{ fontSize:16, color:'var(--outline)' }}>terminal</span>
+          <div className="flex-1 min-h-[250px] lg:min-h-0 flex flex-col bg-[rgba(20,20,22,0.4)] backdrop-blur-xl border border-white/10 rounded-2xl md:rounded-[24px] overflow-hidden">
+            <div className="bg-white/5 border-b border-white/10 px-4 py-2 flex items-center justify-between shrink-0">
+              <span className="font-mono text-[10px] text-outline uppercase tracking-widest">System Log</span>
+              <span className="material-symbols-outlined text-sm md:text-base text-outline">terminal</span>
             </div>
-            <div style={{ flex:1, overflowY:'auto', padding:16, display:'flex', flexDirection:'column', gap:8 }}>
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
               {gameState.chatMessages.length === 0 ? (
-                <div style={{ display:'flex', gap:8, fontSize:12, fontFamily:'var(--font-mono)' }}>
-                  <span style={{ color:'var(--secondary)' }}>[00:00]</span>
-                  <span style={{ color:'rgba(194,196,232,0.6)' }}>Connection established to Arena</span>
+                <div className="flex gap-2 text-[11px] md:text-xs font-mono">
+                  <span className="text-secondary">[00:00]</span>
+                  <span className="text-[#c2c4e8]/60">Connection established to Arena</span>
                 </div>
               ) : gameState.chatMessages.map((msg, i) => (
-                <div key={i} style={{ display:'flex', gap:8, fontSize:12, fontFamily:'var(--font-mono)', wordBreak:'break-all' }}>
-                  <span style={{ color: msg.userId === userId ? 'var(--secondary)' : 'var(--tertiary)', flexShrink:0 }}>{msg.username}:</span>
-                  <span style={{ color:'rgba(194,196,232,0.7)' }} dangerouslySetInnerHTML={{ __html: msg.message }} />
+                <div key={i} className="flex gap-2 text-[11px] md:text-xs font-mono break-words">
+                  <span className="shrink-0" style={{ color: msg.userId === userId ? 'var(--secondary)' : 'var(--tertiary)' }}>{msg.username}:</span>
+                  <span className="text-[#c2c4e8]/70" dangerouslySetInnerHTML={{ __html: msg.message }} />
                 </div>
               ))}
               <div ref={chatEndRef} />
             </div>
             {/* Command input */}
-            <form onSubmit={handleChat} style={{ padding:12, borderTop:'1px solid rgba(255,255,255,0.1)', background:'rgba(0,0,0,0.2)', display:'flex', gap:12, alignItems:'center', flexShrink:0 }}>
-              <span style={{ color:'var(--secondary)', fontWeight:700, fontFamily:'var(--font-mono)', fontSize:14 }}>&gt;</span>
+            <form onSubmit={handleChat} className="p-3 border-t border-white/10 bg-black/20 flex gap-3 items-center shrink-0">
+              <span className="text-secondary font-bold font-mono text-xs md:text-sm">&gt;</span>
               <input value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Send message…" maxLength={200}
-                style={{ flex:1, background:'transparent', border:'none', outline:'none', fontSize:13, color:'var(--on-surface)', fontFamily:'var(--font-mono)' }} />
-              <button type="submit" style={{ background:'none', border:'none', cursor:'pointer' }}>
-                <span className="material-symbols-outlined" style={{ fontSize:16, color:'var(--secondary)' }}>send</span>
+                className="flex-1 bg-transparent border-none outline-none text-[11px] md:text-xs text-on-surface font-mono" />
+              <button type="submit" className="bg-transparent border-none cursor-pointer flex items-center">
+                <span className="material-symbols-outlined text-sm md:text-base text-secondary">send</span>
               </button>
             </form>
           </div>
@@ -647,12 +667,23 @@ export default function BattlePage() {
       </main>
 
       {/* Footer */}
-      <footer style={{ width:'100%', padding:'12px 48px', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(2,2,10,0.2)', backdropFilter:'blur(20px)', borderTop:'1px solid rgba(255,255,255,0.05)', flexShrink:0 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <span style={{ fontSize:10, fontWeight:700, color:'rgba(169,206,202,0.5)', letterSpacing:'0.05em' }}>CLASHVERS</span>
-          <span style={{ fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.3)' }}>© 2024 PROTOCOL INITIATED.</span>
+      <footer className="hidden lg:flex w-full px-12 py-3 justify-between items-center bg-[rgba(2,2,10,0.2)] backdrop-blur-xl border-t border-white/5 shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-bold text-[#a9ceca]/50 tracking-wider">CLASHVERS</span>
+          <span className="text-[10px] tracking-widest uppercase text-white/30">© 2024 PROTOCOL INITIATED.</span>
         </div>
-        <div style={{ display:'flex', gap:32 }}>
+        <div className="flex gap-8">
+          {['Privacy Grid','Terms of Combat','Neural Link'].map(l => (
+            <a key={l} href="#" className="text-[10px] tracking-widest uppercase text-white/25 no-underline hover:text-white/50">{l}</a>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(169,206,202,0.8)]" />
+          <span className="text-[10px] tracking-widest uppercase text-secondary">Synchronized</span>
+        </div>
+      </footer>
+    </div>
+  );x', gap:32 }}>
           {['Privacy Grid','Terms of Combat','Neural Link'].map(l => (
             <a key={l} href="#" style={{ fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.25)', textDecoration:'none' }}>{l}</a>
           ))}
