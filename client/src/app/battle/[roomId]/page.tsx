@@ -670,3 +670,4 @@ export default function BattlePage() {
       `}</style>
     </div>
   );
+}
