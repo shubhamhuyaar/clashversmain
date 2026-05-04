@@ -147,34 +147,92 @@ export default function BattlePage() {
 
   // ── Username Modal ──────────────────────────────────────────────────────────
   if (showModal) return (
-    <div className="h-full grid-bg flex items-center justify-center">
-      <form onSubmit={handleUsernameSubmit} className="flex flex-col gap-4 p-8 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', minWidth: 320 }}>
-        <h2 className="text-xl font-bold text-white text-center">Enter Username</h2>
-        <input autoFocus value={pendingName} onChange={e => setPendingName(e.target.value)} placeholder="your_handle" maxLength={20}
-          className="px-4 py-2 rounded-lg text-white outline-none" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', fontFamily: 'JetBrains Mono, monospace' }} />
-        <button type="submit" className="py-2 rounded-lg font-semibold text-black" style={{ background: 'var(--accent-green)' }}>Enter Arena</button>
-      </form>
+    <div style={{ height: '100vh', background: 'var(--background)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+      <div className="grid-bg" style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }} />
+      {/* Top nav */}
+      <header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50, display: 'flex', alignItems: 'center', padding: '0 32px', height: 80, background: 'rgba(14,14,16,0.60)', backdropFilter: 'blur(40px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', color: '#A7A9CC', fontStyle: 'italic' }}>Clashvers</div>
+      </header>
+      <div className="glass-panel" style={{ position: 'relative', zIndex: 1, borderRadius: 24, padding: '48px 40px', display: 'flex', flexDirection: 'column', gap: 20, minWidth: 400, textAlign: 'center' }}>
+        <h2 style={{ fontSize: 24, fontWeight: 700, color: 'var(--on-surface)', letterSpacing: '-0.02em' }}>Identify Yourself</h2>
+        <p style={{ fontSize: 14, color: 'var(--secondary)' }}>Enter a username to enter the arena</p>
+        <form onSubmit={handleUsernameSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 8 }}>
+          <input autoFocus value={pendingName} onChange={e => setPendingName(e.target.value)} placeholder="your_handle" maxLength={20}
+            style={{ padding: '14px 18px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, color: 'var(--on-surface)', fontFamily: 'var(--font-sans)', fontSize: 15, outline: 'none', textAlign: 'center' }} />
+          <button type="submit" style={{ padding: '15px', background: 'var(--primary)', color: 'var(--on-primary)', fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 600, border: 'none', borderRadius: 12, cursor: 'pointer' }}>Enter Arena →</button>
+        </form>
+      </div>
     </div>
   );
 
   if (gameState.status === 'idle') return (
-    <div className="h-full grid-bg flex flex-col items-center justify-center gap-4" style={{ background: 'var(--background)' }}>
-      <div className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(0,245,255,0.2)', borderTopColor: 'var(--primary-container)' }} />
-      <p className="text-sm" style={{ color: 'var(--on-surface-variant)', fontFamily: 'var(--font-mono)' }}>{connected ? 'Joining battle room…' : 'Connecting to server…'}</p>
+    <div style={{ height: '100vh', background: 'var(--background)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, position: 'relative' }}>
+      <div className="grid-bg" style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }} />
+      <header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50, display: 'flex', alignItems: 'center', padding: '0 32px', height: 80, background: 'rgba(14,14,16,0.60)', backdropFilter: 'blur(40px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', color: '#A7A9CC', fontStyle: 'italic' }}>Clashvers</div>
+      </header>
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+        <div style={{ width: 40, height: 40, border: '2px solid rgba(167,169,204,0.15)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <p style={{ color: 'var(--secondary)', fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{connected ? 'Joining battle room…' : 'Connecting to server…'}</p>
+      </div>
     </div>
   );
 
   // ── Waiting ────────────────────────────────────────────────────────────────
   if (gameState.status === 'waiting') return (
-    <div className="h-full grid-bg flex flex-col items-center justify-center gap-6" style={{ background: 'var(--background)' }}>
-      <div className="animate-float text-5xl font-bold" style={{ fontFamily: 'var(--font-mono)' }}>
-        <span style={{ color: 'var(--on-surface)' }}>clash</span>
-        <span style={{ color: 'var(--primary-container)', textShadow: '0 0 30px rgba(0,245,255,0.5)' }}>vers</span>
+    <div style={{ height: '100vh', background: 'var(--background)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div className="grid-bg" style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }} />
+      {/* Radial glow */}
+      <div style={{ position: 'fixed', top: '40%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 600, background: 'radial-gradient(circle, rgba(167,169,204,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+      {/* Top nav */}
+      <header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 32px', height: 80, background: 'rgba(14,14,16,0.60)', backdropFilter: 'blur(40px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', color: '#A7A9CC', fontStyle: 'italic' }}>Clashvers</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: connected ? '#4ade80' : 'var(--error)', boxShadow: connected ? '0 0 10px rgba(74,222,128,0.8)' : 'none', display: 'inline-block', animation: connected ? 'pulse-dot 2s ease-in-out infinite' : 'none' }} />
+          <span style={{ fontSize: 12, color: connected ? '#4ade80' : 'var(--error)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>{connected ? 'CONNECTED' : 'OFFLINE'}</span>
+        </div>
+      </header>
+
+      {/* Main card */}
+      <div className="glass-panel" style={{ position: 'relative', zIndex: 1, borderRadius: 28, padding: '56px 56px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32, textAlign: 'center', maxWidth: 560, width: '90%' }}>
+        {/* Radar pulse visual */}
+        <div style={{ position: 'relative', width: 100, height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {[0, 1, 2].map(i => (
+            <div key={i} style={{ position: 'absolute', width: 100, height: 100, borderRadius: '50%', border: '1px solid rgba(167,169,204,0.2)', animation: `ping 2s ease-out ${i * 0.6}s infinite`, opacity: 0 }} />
+          ))}
+          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(167,169,204,0.08)', border: '2px solid rgba(167,169,204,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 24, height: 24, border: '2px solid rgba(167,169,204,0.2)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 0.9s linear infinite' }} />
+          </div>
+        </div>
+
+        {/* Logo */}
+        <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 800, fontSize: 40, letterSpacing: '-0.03em', fontStyle: 'italic', color: 'var(--primary)' }}>Clashvers</div>
+
+        {/* Status */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--on-surface)', letterSpacing: '-0.02em' }}>Scanning for Opponent</div>
+          <div style={{ fontSize: 14, color: 'var(--secondary)', lineHeight: 1.5 }}>Searching for a worthy challenger.<br />This may take a moment — stay sharp.</div>
+        </div>
+
+        {/* Room ID */}
+        <div style={{ width: '100%', padding: '12px 20px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--secondary)', letterSpacing: '0.05em' }}>ROOM ID</span>
+          <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--on-surface-variant)', letterSpacing: '0.05em', maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{roomId}</span>
+        </div>
+
+        {/* Share button */}
+        <button onClick={() => { navigator.clipboard.writeText(window.location.href); }}
+          style={{ padding: '14px 36px', background: 'var(--primary)', color: 'var(--on-primary)', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, border: 'none', borderRadius: 12, cursor: 'pointer', letterSpacing: '-0.01em', width: '100%' }}>
+          Invite Opponent — Copy Link
+        </button>
       </div>
-      <div className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(0,245,255,0.2)', borderTopColor: 'var(--primary-container)' }} />
-      <p className="text-sm" style={{ color: 'var(--on-surface-variant)', fontFamily: 'var(--font-mono)' }}>Waiting for opponent…</p>
-      <p className="text-xs" style={{ color: 'var(--outline)', fontFamily: 'var(--font-mono)' }}>{roomId}</p>
-      <button onClick={() => navigator.clipboard.writeText(window.location.href)} className="text-xs px-3 py-1 border" style={{ borderColor: 'var(--outline-variant)', color: 'var(--on-surface-variant)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-mono)' }}>📋 Copy Link</button>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes ping { 0% { transform: scale(0.4); opacity: 0.8; } 100% { transform: scale(2.2); opacity: 0; } }
+        @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+      `}</style>
     </div>
   );
 
