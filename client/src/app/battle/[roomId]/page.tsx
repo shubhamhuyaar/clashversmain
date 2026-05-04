@@ -435,123 +435,215 @@ export default function BattlePage() {
 
   // ── Arena ──────────────────────────────────────────────────────────────────
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative', background: 'var(--background)' }}>
+    <div style={{ height:'100vh', display:'flex', flexDirection:'column', background:'var(--background)', overflow:'hidden', position:'relative', fontFamily:'var(--font-sans)' }}>
       {AIOverlay}
       {RevealOverlay}
       {DrawModal}
       {FinishModal}
 
-      {/* Header */}
-      <header style={{ display:'flex', alignItems:'center', gap:12, padding:'0 20px', height:52, flexShrink:0, zIndex:10, background:'rgba(19,19,21,0.97)', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
-        <span style={{ fontFamily:'var(--font-sans)', fontWeight:800, fontSize:18, letterSpacing:'-0.03em', fontStyle:'italic', color:'var(--primary)' }}>Clashvers</span>
-        <div style={{ width:1, height:18, background:'rgba(255,255,255,0.1)' }} />
-        <span style={{ fontSize:11, color:'var(--secondary)', fontFamily:'var(--font-mono)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', maxWidth:220 }}>{gameState.problem?.title ?? '…'}</span>
-        <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:12 }}>
-          <span style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, fontFamily:'var(--font-mono)', color: connected ? '#4ade80' : 'var(--error)' }}>
-            <span style={{ width:7, height:7, borderRadius:'50%', background: connected ? '#4ade80' : 'var(--error)', boxShadow: connected ? '0 0 8px rgba(74,222,128,0.8)' : 'none', display:'inline-block' }} />
-            {connected ? 'LIVE' : 'OFFLINE'}
+      {/* Top Nav */}
+      <nav style={{ position:'fixed', top:0, width:'100%', zIndex:50, display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0 32px', height:80, background:'rgba(19,19,21,0.3)', backdropFilter:'blur(24px)', borderBottom:'1px solid rgba(255,255,255,0.05)', boxShadow:'0 4px 24px rgba(0,0,0,0.4)' }}>
+        {/* Left: Logo + problem */}
+        <div style={{ display:'flex', alignItems:'center', gap:32 }}>
+          <span style={{ fontSize:24, fontWeight:700, letterSpacing:'-0.03em', color:'var(--primary)', fontStyle:'italic' }}>Clashvers</span>
+          <span style={{ fontSize:13, color:'var(--on-surface-variant)', fontFamily:'var(--font-mono)', maxWidth:240, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{gameState.problem?.title ?? '…'}</span>
+        </div>
+
+        {/* Center: Timer pill */}
+        <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', flexDirection:'column', alignItems:'center' }}>
+          <div style={{ padding:'4px 24px', background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderTop:'1px solid rgba(194,196,232,0.3)', borderRadius:9999, display:'flex', alignItems:'center', gap:12 }}>
+            <span className="material-symbols-outlined" style={{ fontSize:16, color:'var(--secondary)' }}>timer</span>
+            <span style={{ fontFamily:'var(--font-mono)', fontSize:24, fontWeight:500, color:'var(--secondary)', letterSpacing:'0.1em', textShadow:'0 0 10px rgba(169,206,202,0.8), 0 0 20px rgba(169,206,202,0.4)' }}>
+              {timeLeft !== null ? fmtTime(timeLeft) : '00:00'}
+            </span>
+          </div>
+        </div>
+
+        {/* Right: Status + actions */}
+        <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+          <span style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, fontFamily:'var(--font-mono)', color: connected ? 'var(--secondary)' : 'var(--error)' }}>
+            <span style={{ width:8, height:8, borderRadius:'50%', background: connected ? 'var(--secondary)' : 'var(--error)', boxShadow: connected ? '0 0 8px rgba(169,206,202,0.8)' : 'none', display:'inline-block' }} />
+            {connected ? 'Synchronized' : 'Offline'}
           </span>
-          {gameState.status === 'active' && timeLeft !== null && (
-            <span style={{ fontSize:15, fontWeight:800, fontFamily:'var(--font-mono)', color:timerColor, letterSpacing:'-0.02em' }}>⏱ {fmtTime(timeLeft)}</span>
-          )}
           {gameState.status === 'active' && (
             <button onClick={requestFinish} disabled={!!gameState.finishPending}
-              style={{ padding:'6px 14px', background:'rgba(167,169,204,0.1)', border:'1px solid rgba(167,169,204,0.25)', color:'var(--primary)', borderRadius:8, fontFamily:'var(--font-mono)', fontSize:11, fontWeight:700, cursor:'pointer', opacity: gameState.finishPending ? 0.4 : 1 }}>
+              style={{ padding:'8px 16px', background:'rgba(194,196,232,0.1)', border:'1px solid rgba(194,196,232,0.3)', color:'var(--primary)', borderRadius:8, fontFamily:'var(--font-mono)', fontSize:11, fontWeight:700, cursor:'pointer', opacity: gameState.finishPending ? 0.4 : 1 }}>
               🏁 {gameState.finishPending ? 'Pending…' : 'Submit Early'}
             </button>
           )}
           {gameState.status === 'active' && (
             <button onClick={requestDraw} disabled={!!gameState.drawPending || gameState.drawAttempts >= 3}
-              style={{ padding:'6px 14px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.1)', color:'var(--on-surface-variant)', borderRadius:8, fontFamily:'var(--font-mono)', fontSize:11, fontWeight:700, cursor:'pointer', opacity:(gameState.drawPending||gameState.drawAttempts>=3) ? 0.4 : 1 }}>
+              style={{ padding:'8px 16px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', color:'var(--on-surface-variant)', borderRadius:8, fontFamily:'var(--font-mono)', fontSize:11, fontWeight:700, cursor:'pointer', opacity:(gameState.drawPending||gameState.drawAttempts>=3)?0.4:1 }}>
               🤝 {gameState.drawPending ? 'Pending…' : `Draw (${3 - gameState.drawAttempts})`}
             </button>
           )}
         </div>
-      </header>
+      </nav>
 
-      {/* Problem Panel */}
-      {problemOpen && gameState.problem && (
-        <div style={{ flexShrink:0, maxHeight:160, overflowY:'auto', padding:'12px 20px', position:'relative', background:'rgba(255,255,255,0.02)', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-          <button onClick={() => setProblemOpen(false)} style={{ position:'absolute', top:10, right:14, background:'none', border:'none', color:'var(--secondary)', cursor:'pointer', fontSize:14 }}>✕</button>
-          <p style={{ fontWeight:600, color:'var(--on-surface)', marginBottom:6, fontSize:13 }}>{gameState.problem.title}</p>
-          <p style={{ color:'var(--on-surface-variant)', fontSize:12, lineHeight:1.65, marginBottom:8 }}>{gameState.problem.description}</p>
-          <pre style={{ color:'var(--secondary)', fontSize:11, fontFamily:'var(--font-mono)', whiteSpace:'pre-wrap', wordBreak:'break-all', lineHeight:1.5, margin:0 }}>{gameState.problem.examples}</pre>
-        </div>
-      )}
-      {!problemOpen && (
-        <button onClick={() => setProblemOpen(true)} style={{ flexShrink:0, padding:'5px 20px', textAlign:'left', background:'rgba(255,255,255,0.015)', borderBottom:'1px solid rgba(255,255,255,0.06)', borderTop:'none', borderLeft:'none', borderRight:'none', color:'var(--secondary)', fontSize:11, fontFamily:'var(--font-mono)', cursor:'pointer' }}>
-          📋 {gameState.problem?.title} — click to expand
-        </button>
-      )}
+      {/* Main content */}
+      <main style={{ flex:1, marginTop:80, padding:'24px 32px', display:'flex', gap:24, overflow:'hidden', height:'calc(100vh - 80px)' }}>
 
-      {gameState.errorMessage && (
-        <div style={{ flexShrink:0, padding:'5px 20px', fontSize:11, textAlign:'center', background:'rgba(255,180,171,0.08)', color:'var(--error)', borderBottom:'1px solid rgba(255,180,171,0.15)' }}>{gameState.errorMessage}</div>
-      )}
-      {gameState.isRateLimited && (
-        <div style={{ flexShrink:0, padding:'4px 20px', fontSize:11, textAlign:'center', background:'rgba(220,197,145,0.08)', color:'var(--tertiary)' }}>⚠ Typing too fast — slowing sync</div>
-      )}
-
-      {/* Editors row */}
-      <div style={{ flex:1, minHeight:0, display:'flex', overflow:'hidden' }}>
-        {/* My Editor */}
-        <div style={{ flex:1, minWidth:0, display:'flex', flexDirection:'column', borderRight:'2px solid rgba(255,255,255,0.07)' }}>
-          <div style={{ flexShrink:0, display:'flex', alignItems:'center', gap:10, padding:'8px 14px', background:'rgba(167,169,204,0.04)', borderBottom:'1px solid rgba(255,255,255,0.07)' }}>
-            <span style={{ width:8, height:8, borderRadius:'50%', background:'var(--primary)', boxShadow:'0 0 8px rgba(167,169,204,0.6)', flexShrink:0 }} />
-            <span style={{ fontSize:11, fontFamily:'var(--font-mono)', color:'var(--primary)', fontWeight:700 }}>YOU — {username}{me?.elo ? ` [${me.elo} ELO]` : ''}</span>
-            <select value={myLang} onChange={e => setMyLang(e.target.value)}
-              style={{ marginLeft:'auto', padding:'3px 8px', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'var(--on-surface)', borderRadius:6, fontFamily:'var(--font-mono)', fontSize:11, outline:'none', cursor:'pointer' }}>
-              {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-            </select>
-          </div>
-          <div style={{ flex:1, minHeight:0 }}>
-            <MonacoEditor height="100%" language={myLang} value={myCode} theme="vs-dark" onChange={handleCodeChange} options={editorOptions} />
-          </div>
-        </div>
-
-        {/* Enemy Editor */}
-        <div style={{ flex:1, minWidth:0, display:'flex', flexDirection:'column' }}>
-          <div style={{ flexShrink:0, display:'flex', alignItems:'center', gap:10, padding:'8px 14px', background:'rgba(220,197,145,0.04)', borderBottom:'1px solid rgba(255,255,255,0.07)' }}>
-            <span style={{ width:8, height:8, borderRadius:'50%', background:'var(--tertiary)', boxShadow:'0 0 8px rgba(220,197,145,0.6)', flexShrink:0 }} />
-            <span style={{ fontSize:11, fontFamily:'var(--font-mono)', color:'var(--tertiary)', fontWeight:700 }}>ENEMY — {opponent?.username ?? 'Unknown'}{opponent?.elo ? ` [${opponent.elo} ELO]` : ''}</span>
-            <span style={{ marginLeft:'auto', fontSize:11, fontFamily:'var(--font-mono)', color:'var(--secondary)' }}>{gameState.opponentCodeLength} chars</span>
-          </div>
-          <div style={{ flex:1, minHeight:0, position:'relative', overflow:'hidden' }}>
-            <pre style={{ position:'absolute', inset:0, padding:12, fontSize:12, fontFamily:'var(--font-mono)', lineHeight:1.5, background:'#1e1e1e', color:'rgba(255,255,255,0.12)', whiteSpace:'pre-wrap', wordBreak:'break-all', margin:0, overflow:'hidden' }}>{dummyText}</pre>
-            {!isRevealed && (
-              <div style={{ position:'absolute', inset:0, backdropFilter:'blur(10px)', background:'rgba(13,13,15,0.65)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:10 }}>
-                <span style={{ fontSize:36 }}>🔒</span>
-                <p style={{ fontSize:14, fontFamily:'var(--font-mono)', color:'var(--tertiary)', fontWeight:700 }}>
-                  {gameState.opponentCodeLength > 0 ? `${gameState.opponentCodeLength} chars` : 'Waiting…'}
-                </p>
-                <p style={{ fontSize:11, color:'var(--secondary)' }}>Revealed by AI on time's up</p>
-              </div>
-            )}
-            {isRevealed && revealedOpponent && (
-              <div style={{ position:'absolute', inset:0 }}>
-                <MonacoEditor height="100%" language={revealedOpponent.language} value={revealedOpponent.code} theme="vs-dark" options={{ ...editorOptions, readOnly:true }} />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Chat */}
-      <div style={{ flexShrink:0, height:112, borderTop:'1px solid rgba(255,255,255,0.07)', background:'rgba(19,19,21,0.9)', display:'flex', flexDirection:'column' }}>
-        <div style={{ flex:1, overflowY:'auto', padding:'6px 14px', display:'flex', flexDirection:'column', gap:3 }}>
-          {gameState.chatMessages.map((msg, i) => (
-            <div key={i} style={{ fontSize:12, wordBreak:'break-all' }}>
-              <span style={{ fontFamily:'var(--font-mono)', fontWeight:700, color: msg.userId === userId ? 'var(--primary)' : 'var(--tertiary)' }}>{msg.username}: </span>
-              <span style={{ color:'var(--on-surface-variant)' }} dangerouslySetInnerHTML={{ __html: msg.message }} />
+        {/* Left: Monaco Editor */}
+        <section style={{ flex:1, display:'flex', flexDirection:'column', gap:16, minWidth:0 }}>
+          {/* Editor title bar */}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 8px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+              <span className="material-symbols-outlined" style={{ fontSize:20, color:'var(--primary)' }}>terminal</span>
+              <span style={{ fontSize:20, fontWeight:500, color:'var(--on-surface)', letterSpacing:'-0.01em' }}>{username || 'You'}.{myLang}</span>
+              <span style={{ padding:'2px 8px', borderRadius:4, fontSize:10, fontWeight:700, background:'rgba(194,196,232,0.1)', color:'var(--primary)', border:'1px solid rgba(194,196,232,0.2)', textTransform:'uppercase', letterSpacing:'0.1em' }}>Write Mode</span>
             </div>
-          ))}
-          <div ref={chatEndRef} />
+            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+              <span style={{ fontSize:13, color:'var(--outline)', letterSpacing:'0.02em', fontFamily:'var(--font-mono)' }}>Chars: {myCode.length}</span>
+              <select value={myLang} onChange={e => setMyLang(e.target.value)}
+                style={{ padding:'4px 10px', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'var(--on-surface)', borderRadius:6, fontFamily:'var(--font-mono)', fontSize:11, outline:'none', cursor:'pointer' }}>
+                {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Problem collapsed bar */}
+          {!problemOpen && (
+            <button onClick={() => setProblemOpen(true)} style={{ padding:'6px 16px', textAlign:'left', background:'rgba(255,255,255,0.02)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:8, color:'var(--secondary)', fontSize:11, fontFamily:'var(--font-mono)', cursor:'pointer' }}>
+              📋 {gameState.problem?.title} — click to expand
+            </button>
+          )}
+          {problemOpen && gameState.problem && (
+            <div style={{ flexShrink:0, maxHeight:140, overflowY:'auto', padding:'12px 16px', position:'relative', background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:12 }}>
+              <button onClick={() => setProblemOpen(false)} style={{ position:'absolute', top:8, right:12, background:'none', border:'none', color:'var(--secondary)', cursor:'pointer', fontSize:14 }}>✕</button>
+              <p style={{ fontWeight:600, color:'var(--on-surface)', marginBottom:4, fontSize:13 }}>{gameState.problem.title}</p>
+              <p style={{ color:'var(--on-surface-variant)', fontSize:12, lineHeight:1.65, marginBottom:6 }}>{gameState.problem.description}</p>
+              <pre style={{ color:'var(--outline)', fontSize:11, fontFamily:'var(--font-mono)', whiteSpace:'pre-wrap', wordBreak:'break-all', lineHeight:1.5, margin:0 }}>{gameState.problem.examples}</pre>
+            </div>
+          )}
+
+          {/* Glass editor card */}
+          <div style={{ flex:1, minHeight:0, display:'flex', flexDirection:'column', background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(194,196,232,0.2)', borderRadius:24, overflow:'hidden', boxShadow:'0 0 15px rgba(194,196,232,0.1)' }}>
+            {/* Editor chrome bar */}
+            <div style={{ height:40, background:'rgba(255,255,255,0.05)', borderBottom:'1px solid rgba(255,255,255,0.1)', display:'flex', alignItems:'center', padding:'0 16px', justifyContent:'space-between', flexShrink:0 }}>
+              <div style={{ display:'flex', gap:8 }}>
+                <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(255,180,171,0.4)' }} />
+                <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(220,197,145,0.4)' }} />
+                <div style={{ width:8, height:8, borderRadius:'50%', background:'rgba(169,206,202,0.4)' }} />
+              </div>
+              <span style={{ fontFamily:'var(--font-mono)', fontSize:10, color:'rgba(255,255,255,0.3)', letterSpacing:'0.05em' }}>Clashvers-IDE v1.0.4</span>
+            </div>
+            {/* Monaco */}
+            <div style={{ flex:1, minHeight:0 }}>
+              <MonacoEditor height="100%" language={myLang} value={myCode} theme="vs-dark" onChange={handleCodeChange} options={editorOptions} />
+            </div>
+          </div>
+        </section>
+
+        {/* Right: HUD Sidebar */}
+        <aside style={{ width:384, display:'flex', flexDirection:'column', gap:24, overflow:'hidden' }}>
+
+          {/* Opponent Card */}
+          <div style={{ background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:24, padding:24, position:'relative', overflow:'hidden' }}>
+            {/* Live indicator */}
+            <div style={{ position:'absolute', top:12, right:12, padding:8 }}>
+              <span className="material-symbols-outlined" style={{ fontSize:16, color:'var(--error)', fontVariationSettings:"'FILL' 1" }}>sensors</span>
+            </div>
+
+            <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:24 }}>
+              <div style={{ position:'relative' }}>
+                <div style={{ width:64, height:64, borderRadius:12, border:'1px solid rgba(255,255,255,0.1)', overflow:'hidden', background:'rgba(116,118,143,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:28 }}>⚔</div>
+                <div style={{ position:'absolute', bottom:-4, right:-4, padding:'2px 6px', background:'var(--error)', fontSize:8, fontWeight:700, borderRadius:4, color:'white', textTransform:'uppercase', letterSpacing:'-0.02em' }}>LIVE</div>
+              </div>
+              <div>
+                <h3 style={{ fontSize:20, fontWeight:500, color:'var(--on-surface)', lineHeight:1.2 }}>{opponent?.username ?? 'Opponent'}</h3>
+                <p style={{ fontSize:13, color:'var(--outline)', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:2 }}>{opponent?.elo ? `${opponent.elo} ELO` : 'Unknown'}</p>
+              </div>
+            </div>
+
+            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', fontSize:13, marginBottom:4 }}>
+                <span style={{ color:'var(--outline)', textTransform:'uppercase', letterSpacing:'0.1em', fontSize:10 }}>Code Progress</span>
+                <span style={{ color:'var(--secondary)', fontFamily:'var(--font-mono)', fontSize:13 }}>{gameState.opponentCodeLength} chars</span>
+              </div>
+              {/* Progress bar */}
+              <div style={{ height:8, width:'100%', background:'rgba(255,255,255,0.05)', borderRadius:9999, overflow:'hidden', border:'1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ height:'100%', background:'var(--secondary)', boxShadow:'0 0 10px rgba(169,206,202,0.5)', transition:'width 0.5s ease', width:`${Math.min(100, (gameState.opponentCodeLength/500)*100)}%` }} />
+              </div>
+              {gameState.opponentCodeLength > 0 && (
+                <div style={{ display:'flex', alignItems:'center', gap:8, fontSize:10, color:'rgba(169,206,202,0.6)', fontFamily:'var(--font-mono)' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize:12 }}>keyboard</span>
+                  OPPONENT IS TYPING...
+                </div>
+              )}
+              {!isRevealed && gameState.opponentCodeLength === 0 && (
+                <div style={{ display:'flex', alignItems:'center', gap:8, fontSize:10, color:'var(--outline)', fontFamily:'var(--font-mono)' }}>
+                  🔒 Code locked until match ends
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Stats bento grid */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+            <div style={{ background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:24, padding:24 }}>
+              <div style={{ fontSize:10, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>My ELO</div>
+              <div style={{ fontSize:24, fontWeight:500, color:'var(--on-surface)', fontFamily:'var(--font-mono)' }}>{me?.elo ?? '—'}</div>
+            </div>
+            <div style={{ background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:24, padding:24 }}>
+              <div style={{ fontSize:10, color:'rgba(255,255,255,0.3)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:4 }}>Enemy ELO</div>
+              <div style={{ fontSize:24, fontWeight:500, color:'var(--on-surface)', fontFamily:'var(--font-mono)' }}>{opponent?.elo ?? '—'}</div>
+            </div>
+          </div>
+
+          {/* System Log (replaces chat) */}
+          <div style={{ flex:1, minHeight:0, display:'flex', flexDirection:'column', background:'rgba(20,20,22,0.4)', backdropFilter:'blur(40px)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:24, overflow:'hidden' }}>
+            <div style={{ background:'rgba(255,255,255,0.05)', borderBottom:'1px solid rgba(255,255,255,0.1)', padding:'8px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
+              <span style={{ fontFamily:'var(--font-mono)', fontSize:10, color:'var(--outline)', textTransform:'uppercase', letterSpacing:'0.1em' }}>System Log</span>
+              <span className="material-symbols-outlined" style={{ fontSize:16, color:'var(--outline)' }}>terminal</span>
+            </div>
+            <div style={{ flex:1, overflowY:'auto', padding:16, display:'flex', flexDirection:'column', gap:8 }}>
+              {gameState.chatMessages.length === 0 ? (
+                <div style={{ display:'flex', gap:8, fontSize:12, fontFamily:'var(--font-mono)' }}>
+                  <span style={{ color:'var(--secondary)' }}>[00:00]</span>
+                  <span style={{ color:'rgba(194,196,232,0.6)' }}>Connection established to Arena</span>
+                </div>
+              ) : gameState.chatMessages.map((msg, i) => (
+                <div key={i} style={{ display:'flex', gap:8, fontSize:12, fontFamily:'var(--font-mono)', wordBreak:'break-all' }}>
+                  <span style={{ color: msg.userId === userId ? 'var(--secondary)' : 'var(--tertiary)', flexShrink:0 }}>{msg.username}:</span>
+                  <span style={{ color:'rgba(194,196,232,0.7)' }} dangerouslySetInnerHTML={{ __html: msg.message }} />
+                </div>
+              ))}
+              <div ref={chatEndRef} />
+            </div>
+            {/* Command input */}
+            <form onSubmit={handleChat} style={{ padding:12, borderTop:'1px solid rgba(255,255,255,0.1)', background:'rgba(0,0,0,0.2)', display:'flex', gap:12, alignItems:'center', flexShrink:0 }}>
+              <span style={{ color:'var(--secondary)', fontWeight:700, fontFamily:'var(--font-mono)', fontSize:14 }}>&gt;</span>
+              <input value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Send message…" maxLength={200}
+                style={{ flex:1, background:'transparent', border:'none', outline:'none', fontSize:13, color:'var(--on-surface)', fontFamily:'var(--font-mono)' }} />
+              <button type="submit" style={{ background:'none', border:'none', cursor:'pointer' }}>
+                <span className="material-symbols-outlined" style={{ fontSize:16, color:'var(--secondary)' }}>send</span>
+              </button>
+            </form>
+          </div>
+        </aside>
+      </main>
+
+      {/* Footer */}
+      <footer style={{ width:'100%', padding:'12px 48px', display:'flex', justifyContent:'space-between', alignItems:'center', background:'rgba(2,2,10,0.2)', backdropFilter:'blur(20px)', borderTop:'1px solid rgba(255,255,255,0.05)', flexShrink:0 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <span style={{ fontSize:10, fontWeight:700, color:'rgba(169,206,202,0.5)', letterSpacing:'0.05em' }}>CLASHVERS</span>
+          <span style={{ fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.3)' }}>© 2024 PROTOCOL INITIATED.</span>
         </div>
-        <form onSubmit={handleChat} style={{ display:'flex', gap:8, padding:'0 12px 8px' }}>
-          <input value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Chat…" maxLength={200}
-            style={{ flex:1, padding:'7px 12px', fontSize:12, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', color:'var(--on-surface)', borderRadius:8, fontFamily:'var(--font-mono)', outline:'none' }} />
-          <button type="submit" style={{ padding:'7px 18px', background:'var(--primary)', color:'#131315', fontSize:12, fontWeight:700, border:'none', borderRadius:8, cursor:'pointer', fontFamily:'var(--font-mono)', letterSpacing:'0.04em' }}>SEND</button>
-        </form>
-      </div>
+        <div style={{ display:'flex', gap:32 }}>
+          {['Privacy Grid','Terms of Combat','Neural Link'].map(l => (
+            <a key={l} href="#" style={{ fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.25)', textDecoration:'none' }}>{l}</a>
+          ))}
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <div style={{ width:8, height:8, borderRadius:'50%', background:'var(--secondary)', boxShadow:'0 0 8px rgba(169,206,202,0.8)' }} />
+          <span style={{ fontSize:10, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--secondary)' }}>Synchronized</span>
+        </div>
+      </footer>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes ping { 0% { transform: scale(0.4); opacity: 0.8; } 100% { transform: scale(2.2); opacity: 0; } }
+        @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+      `}</style>
     </div>
   );
-}
